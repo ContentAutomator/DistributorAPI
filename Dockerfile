@@ -8,5 +8,6 @@ RUN yarn install --frozen-lockfile
 
 COPY --chown=node:node api .
 
+RUN yarn build
 # Start NestJS server
 CMD ["yarn", "start:prod"]

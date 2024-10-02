@@ -1,8 +1,19 @@
 services:
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    # image: ghcr.io/contentautomator/distributorapi:main
-    ports:
-      - "5000:5000"
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: ghcr.io/contentautomator/distributorapi:main
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./api/dist/:/home/node/dist/:rw
+  test:
+    image: curlimages/curl:latest
+    command: ["sh", "-c", "curl -X POST http://api:5000/api/v1/render-video -H 'Content-Type: application/json' -d '{\"prompt\": \"Sunset over the mountains\"}'"]
+    depends_on:
+      api:
+        condition: service_healthy

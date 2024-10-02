@@ -1,4 +1,5 @@
 FROM node:20-alpine
+RUN which curl || apk add --no-cache curl
 
 USER node
 WORKDIR /home/node

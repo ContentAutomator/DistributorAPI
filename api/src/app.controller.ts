@@ -19,6 +19,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('/health')
+  getHealth(): string {
+    return 'OK';
+  }
+
   @Post('/api/v1/render-video')
   renderVideo(@Body() videoDetails: VideoDetailsDto) {
     return this.appService.renderVideo(videoDetails);

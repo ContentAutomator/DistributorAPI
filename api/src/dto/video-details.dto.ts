@@ -20,6 +20,10 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class VideoDetailsDto {
+  @IsString()
+  @IsNotEmpty()
+  prompt: string;
+
   // @ApiProperty()
   @IsString()
   @IsNotEmpty()

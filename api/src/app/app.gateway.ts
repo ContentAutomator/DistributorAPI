@@ -11,53 +11,36 @@ import { ClientKafka } from '@nestjs/microservices';
 })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
+  private clientSecretKeys: Map<Socket, string> = new Map();
   constructor(
     @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
   ) {}
-  private intervalId: NodeJS.Timeout;
 
   @SubscribeMessage('subscribe')
   handleSubscription(@MessageBody() data: { secret_key: string }, @ConnectedSocket() client: Socket) {
-    console.log('Data:', data);
-    console.log('Client subscribed:', client.id);
-    console.log('secret_key:', data.secret_key);
-    if (data.secret_key === 'YOUR_SECRET_KEY') {
+    const secretKey = data.secret_key;
+    if (secretKey) {
+      this.clientSecretKeys.set(client, secretKey); // Store client with its secret_key
       client.emit('notification', { message: 'Successfully subscribed!' });
-      console.log('Client authenticated:', client.id);
-
-      // Start sending notifications every 30 seconds
-      this.intervalId = setInterval(() => {
-        client.emit('notification', { message: 'This is a notification sent every 3 seconds!' });
-      }, 3_000);
-
-      // Send success message to the client
-      client.emit('subscription_success', { message: 'Successfully subscribed and authenticated!' });
-    } else {
-      console.log('Client failed authentication:', client.id);
-      // Send error message and disconnect the client
-      client.emit('subscription_error', { message: 'Invalid secret key!' });
-      client.disconnect();
     }
   }
-  sendNotification(message: string) {
-    this.server.emit('notification', message); // Gửi notification tới tất cả các client
+  sendNotification(message: string, secret_key: string) {
+    // Send notification only to clients with the matching secret_key
+    this.clientSecretKeys.forEach((clientKey, client) => {
+      if (clientKey === secret_key) {
+        client.emit('notification', { message});
+      }
+    });
   }
   handleConnection(client: any) {
     console.log('Client connected:', client.id);
-    setTimeout(() => {
-      const message = "This is a notification sent after 5 second!";
-      // Gửi message tới Kafka topic
-      console.log('Sending message to Kafka:', message);
-      client.emit('notification', { message });
-      console.log('Sent message to Kafka:', message);
-    }, 5_000);
-    client.emit('connection_success', { message: 'Successfully connected to the server!' });
+    client.emit('notification', { message: 'Successfully connected to the server!' });
   }
 
   handleDisconnect(client: any) {
     console.log('Client disconnected:', client.id);
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
+    if (this.clientSecretKeys.has(client)) {
+      this.clientSecretKeys.delete(client);
     }
   }
 }

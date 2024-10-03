@@ -45,9 +45,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleConnection(client: any) {
     console.log('Client connected:', client.id);
     setTimeout(() => {
-      const message = { value: 'Hello from Kafka!' };
+      const message = "This is a notification sent after 1 second!";
       // Gửi message tới Kafka topic
-      this.kafkaClient.emit('notification-topic', message);
+      console.log('Sending message to Kafka:', message);
+      client.emit('notification', { message });
       console.log('Sent message to Kafka:', message);
     }, 1000);
     client.emit('connection_success', { message: 'Successfully connected to the server!' });

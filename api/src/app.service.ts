@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-// import { VideoDetailsDto } from './dto/video-details.dto';
+import { VideoDetailsDto } from './dto';
 import Queue from 'bull';
 
 @Injectable()
@@ -8,8 +8,7 @@ export class AppService {
     return 'Hello World!';
   }
 
-  renderVideo(videoDetails) {
-    // Render the video based on the provided details
+  renderVideo(videoDetails: VideoDetailsDto): { message: string; job_id: string } {
     return {
       message: 'Video rendering job submitted successfully',
       job_id: '12345',

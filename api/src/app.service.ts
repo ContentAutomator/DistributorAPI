@@ -1,9 +1,29 @@
-import { Injectable } from '@nestjs/common';
 import { VideoDetailsDto } from './dto';
-import Queue from 'bull';
+// import Queue from 'bull';
+import { OnModuleInit, Inject, Injectable } from '@nestjs/common';
+import { AppGateway } from './app/app.gateway';
+import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
-export class AppService {
+export class AppService implements OnModuleInit {
+  constructor(
+    @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
+    private readonly websocketGateway: AppGateway,
+  ) {}
+
+  async onModuleInit() {
+    // Subscribe tới các topic từ Kafka
+    this.kafkaClient.subscribeToResponseOf('notification-topic');
+    await this.kafkaClient.connect();
+  }
+
+  // Nhận tin nhắn từ Kafka
+  async handleMessage(message: any) {
+    console.log('Received message from Kafka:', message.value);
+
+    // Gửi thông báo tới tất cả client qua WebSocket
+    this.websocketGateway.sendNotification(message.value);
+  }
   getHello(): string {
     return 'Hello World!';
   }

@@ -8,7 +8,7 @@ import { ClientKafka } from '@nestjs/microservices';
 export class AppService implements OnModuleInit {
   constructor(
     @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
-    private readonly websocketGateway: AppGateway,
+    private readonly appGateway: AppGateway,
   ) {}
 
   async onModuleInit() {
@@ -22,7 +22,7 @@ export class AppService implements OnModuleInit {
     console.log('Received message from Kafka:', message.value);
 
     // Gửi thông báo tới tất cả client qua WebSocket
-    this.websocketGateway.sendNotification(message.value);
+    this.appGateway.sendNotification(message.value);
   }
   getHello(): string {
     return 'Hello World!';

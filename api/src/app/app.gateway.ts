@@ -1,5 +1,7 @@
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Inject } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 
 
 @WebSocketGateway({
@@ -9,6 +11,9 @@ import { Server, Socket } from 'socket.io';
 })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
+  constructor(
+    @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
+  ) {}
   private intervalId: NodeJS.Timeout;
 
   @SubscribeMessage('subscribe')
@@ -34,8 +39,17 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.disconnect();
     }
   }
+  sendNotification(message: string) {
+    this.server.emit('notification', message); // Gửi notification tới tất cả các client
+  }
   handleConnection(client: any) {
     console.log('Client connected:', client.id);
+    setTimeout(() => {
+      const message = { value: 'Hello from Kafka!' };
+      // Gửi message tới Kafka topic
+      this.kafkaClient.emit('notification-topic', message);
+      console.log('Sent message to Kafka:', message);
+    }, 1000);
     client.emit('connection_success', { message: 'Successfully connected to the server!' });
   }
 

@@ -12,12 +12,14 @@ services:
     restart: on-failure
     environment:
       KAFKA_BROKERS: kafka:9092
+    command: ["npm", "run", "start"]
     depends_on:
       - kafka
     ports:
       - "3000:3000"
     volumes:
       - ./api/dist/:/home/node/dist/:rw
+      - ./api/src/:/home/node/src/:rw
   test:
     image: curlimages/curl:latest
     command:

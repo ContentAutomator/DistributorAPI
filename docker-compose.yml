@@ -13,7 +13,7 @@ services:
       - ./api/dist/:/home/node/dist/:rw
   test:
     image: curlimages/curl:latest
-    command: ["sh", "-c", "curl -X POST http://api:5000/api/v1/render-video -H 'Content-Type: application/json' -d '{\"prompt\": \"Sunset over the mountains\"}'"]
+    command: ["sh", "-c", "curl -X POST http://api:3000/api/v1/render-video -H 'Content-Type: application/json' -d '{\"prompt\": \"Sunset over the mountains\"}'"]
     depends_on:
       api:
         condition: service_healthy

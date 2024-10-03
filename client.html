@@ -11,8 +11,22 @@
 
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   <script>
-    const socket = io('http://localhost:3000'); // Kết nối tới server WebSocket
+    const socket = io('http://localhost:3000'); // Connect to WebSocket server
 
+    // Send subscribe message with the secret_key
+    socket.emit('subscribe', { secret_key: 'YOUR_SECRET_KEY' });
+
+    // Handle subscription success
+    socket.on('subscription_success', (data) => {
+      console.log(data.message);
+    });
+
+    // Handle subscription error (authentication failed)
+    socket.on('subscription_error', (data) => {
+      console.log(data.message);
+    });
+
+    // Listen for notifications
     socket.on('notification', (data) => {
       const notificationList = document.getElementById('notifications');
       const newNotification = document.createElement('li');

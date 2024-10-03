@@ -25,9 +25,23 @@
     socket.on('subscription_error', (data) => {
       console.log(data.message);
     });
+    let count = 0;
 
     // Listen for notifications
     socket.on('notification', (data) => {
+      if (count === 0) {
+        setTimeout(() => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', 'http://localhost:3000/', true);
+          xhr.send();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              console.log(xhr.responseText);
+            }
+          };
+        }, 200);
+      }
+      count++;
       const notificationList = document.getElementById('notifications');
       const newNotification = document.createElement('li');
       newNotification.textContent = data.message;

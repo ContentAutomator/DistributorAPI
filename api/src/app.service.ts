@@ -28,7 +28,7 @@ export class AppService implements OnModuleInit {
     console.log('Received message from Kafka:', message.value);
 
     // Gửi thông báo tới tất cả client qua WebSocket
-    this.appGateway.sendNotification(message.value);
+    this.appGateway.sendNotification(message.value, 'YOUR_SECRET_KEY');
   }
   getHello(): string {
     return 'Hello World!';

@@ -16,6 +16,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
+    this.appService.handleMessage({ value: 'Hello from Kafka!' });
     return this.appService.getHello();
   }
 

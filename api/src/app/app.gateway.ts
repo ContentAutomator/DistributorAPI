@@ -20,6 +20,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleSubscription(@MessageBody() data: { secret_key: string }, @ConnectedSocket() client: Socket) {
     const secretKey = data.secret_key;
     if (secretKey) {
+      console.log('Client subscribed:', client.id);
+      console.log('Secret key:', secretKey);
       this.clientSecretKeys.set(client, secretKey); // Store client with its secret_key
       client.emit('notification', { message: 'Successfully subscribed!' });
     }

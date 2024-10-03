@@ -6,14 +6,21 @@ services:
     image: ghcr.io/contentautomator/distributorapi:main
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 30s
+      interval: 1s
       timeout: 10s
       retries: 5
+    ports:
+      - "3000:3000"
     volumes:
       - ./api/dist/:/home/node/dist/:rw
   test:
     image: curlimages/curl:latest
-    command: ["sh", "-c", "curl -X POST http://api:3000/api/v1/render-video -H 'Content-Type: application/json' -d '{\"prompt\": \"Sunset over the mountains\"}'"]
+    command:
+      [
+        "sh",
+        "-c",
+        'curl -X POST http://api:3000/api/v1/render-video -H ''Content-Type: application/json'' -d ''{"prompt": "Sunset over the mountains"}''',
+      ]
     depends_on:
       api:
         condition: service_healthy
@@ -22,7 +29,17 @@ services:
     #   context: ./wscat/
     #   dockerfile: Dockerfile
     image: ghcr.io/qtvhao/wscat:master
-    command: ["sh", "-c", "wscat -c ws://api:3000 -m 'Hello from the client!'"]
+    command: |
+      bash -c "set -xeo pipefail; wscat -c ws://api:3000 -x 'message'"
+    depends_on:
+      api:
+        condition: service_healthy
+  client:
+    image: nginx:alpine
+    volumes:
+      - ./client.html:/usr/share/nginx/html/index.html:ro
+    ports:
+      - "8080:80"
     depends_on:
       api:
         condition: service_healthy

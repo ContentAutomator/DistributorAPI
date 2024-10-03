@@ -17,3 +17,12 @@ services:
     depends_on:
       api:
         condition: service_healthy
+  ws:
+    # build:
+    #   context: ./wscat/
+    #   dockerfile: Dockerfile
+    image: ghcr.io/qtvhao/wscat:master
+    command: ["sh", "-c", "wscat -c ws://api:3000 -m 'Hello from the client!'"]
+    depends_on:
+      api:
+        condition: service_healthy

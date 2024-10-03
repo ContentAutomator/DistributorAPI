@@ -4,7 +4,7 @@ USER node
 WORKDIR /home/node
 
 COPY api/package*.json api/yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 COPY --chown=node:node api .
 

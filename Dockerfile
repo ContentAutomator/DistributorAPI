@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-USER node
+# USER node
 WORKDIR /home/node
 
 COPY api/package*.json api/yarn.lock ./

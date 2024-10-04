@@ -30,8 +30,19 @@ import { VideoPromptQueueService } from './video-prompt-queue/video-prompt-queue
 export class AppModule implements OnModuleInit {
   constructor(private readonly videoPromptQueueService: VideoPromptQueueService) {}
 
+  // Generate a UUID v4
+  uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (Math.random() * 16) | 0,
+        v = c == 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
   // When the module initializes, start the recurring job
   async onModuleInit() {
-    await this.videoPromptQueueService.addTimeJob();
+    await this.videoPromptQueueService.add({
+      'prompt': 'Create a lecture video on the topic of "Introduction to JavaScript"',
+      'secret_key': this.uuidv4(),
+    });
   }
 }

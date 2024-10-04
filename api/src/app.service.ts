@@ -25,16 +25,7 @@ export class AppService implements OnModuleInit {
 
   // Nhận tin nhắn từ Kafka
   async handleMessage(
-    job: {
-      job_id: string;
-      status: string;
-      video_url: string;
-      thumbnail_url: string;
-      message: string;
-      duration: number;
-      resolution: string;
-      format: string;
-    },
+    job: VideoDetailsDto,
     secret_key: string,
   ) {
     console.log('Received message from Kafka:', job);

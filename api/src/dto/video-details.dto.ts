@@ -20,7 +20,8 @@
 import { 
   IsNumber,
   IsNotEmpty, 
-  IsString 
+  IsString,
+  IsOptional
 } from 'class-validator';
 
 export class VideoDetailsDto {
@@ -31,56 +32,67 @@ export class VideoDetailsDto {
   // @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title?: string;
 
   // @ApiProperty()
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description?: string;
 
   // @ApiProperty()
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  url: string;
+  url?: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   secret_key: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsNumber()
-  duration: number;
+  duration?: number;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  resolution: string;
+  resolution?: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  format: string;
+  format?: string;
 
   // @ApiProperty()
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  thumbnail_url: string;
+  thumbnail_url?: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
-  status: string;
+  status?: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
-  video_url: string;
-
-  @IsString()
-  @IsNotEmpty()
-  message: string;
-
-  @IsString()
-  @IsNotEmpty()
-  callback_url: string;
+  video_url?: string;
 
   @IsString()
   @IsNotEmpty()
-  job_id: string;
+  message?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  callback_url?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  job_id?: string;
 }

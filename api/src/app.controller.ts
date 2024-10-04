@@ -7,6 +7,7 @@ import {
   Post 
 } from '@nestjs/common';
 import { AppService } from './app.service';
+import { VideoPromptQueueService } from './video-prompt-queue/video-prompt-queue.service';
 
 import { 
   VideoDetailsDto,
@@ -14,7 +15,10 @@ import {
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly videoPromptQueueService: VideoPromptQueueService,
+  ) {}
 
   @Options()
   @Header('Access-Control-Allow-Origin', '*')
@@ -58,8 +62,9 @@ export class AppController {
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   @Header('Access-Control-Allow-Methods', 'POST')
-  renderVideo(@Body() videoDetails: VideoDetailsDto) {
+  async renderVideo(@Body() videoDetails: VideoDetailsDto) {
     console.log('Received video details:', videoDetails);
+    await this.videoPromptQueueService.add(videoDetails);
     return this.appService.renderVideo(videoDetails);
   }
 }

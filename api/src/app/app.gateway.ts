@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Inject } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { VideoDetailsDto } from '../dto';
 
 
 @WebSocketGateway({
@@ -38,16 +39,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
   notifyWhenJobComplete(
-    job: {
-      job_id: string;
-      status: string;
-      video_url: string;
-      thumbnail_url: string;
-      message: string;
-      duration: number;
-      resolution: string;
-      format: string;
-    },
+    job: VideoDetailsDto,
     secret_key: string,
   ) {
     let eventName = 'job_complete';

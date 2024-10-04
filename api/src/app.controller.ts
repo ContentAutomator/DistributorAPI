@@ -3,6 +3,7 @@ import {
   Get,
   Body,
   Header,
+  Options,
   Post 
 } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -15,19 +16,33 @@ import {
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
+  @Options()
   @Header('Access-Control-Allow-Origin', '*')
-  getHello(): string {
-    this.appService.handleMessage({
-      'job_id': '12345',
-      'status': 'complete',
-      'video_url': 'https://example.com/video.mp4',
-      'thumbnail_url': 'https://example.com/thumbnail.jpg',
-      'message': 'Video rendering job complete',
-      'duration': 60,
-      'resolution': '1080p',
-      'format': 'mp4',
-    }, 'YOUR_SECRET_KEY');
+  @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  @Header('Access-Control-Allow-Methods', 'POST')
+  @Header('Access-Control-Max-Age', '3600')
+  @Header('Content-Type', 'application/json')
+  options() {
+    return 'OK';
+  }
+  // 
+  @Post()
+  @Header('Content-Type', 'application/json')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  @Header('Access-Control-Allow-Methods', 'POST')
+  getHello(@Body() postData: { 
+    job_id: string,
+    status: string,
+    video_url: string,
+    thumbnail_url: string,
+    message: string,
+    duration: number,
+    resolution: string,
+    format: string
+  }): string {
+    console.log('Received message:', postData);
+    this.appService.handleMessage(postData, 'YOUR_SECRET_KEY');
 
     return this.appService.getHello();
   }

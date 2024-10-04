@@ -42,9 +42,20 @@
     socket.on('notification', (data) => {
       if (count === 0) {
         setTimeout(() => {
+          let postData = {
+            'job_id': '12345',
+            'status': 'complete',
+            'video_url': 'https://example.com/video.mp4',
+            'thumbnail_url': 'https://example.com/thumbnail.jpg',
+            'message': 'Video rendering job complete',
+            'duration': 60,
+            'resolution': '1080p',
+            'format': 'mp4',
+          };
           const xhr = new XMLHttpRequest();
-          xhr.open('GET', 'http://localhost:3000/', true);
-          xhr.send();
+          xhr.open('POST', 'http://localhost:3000/', true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.send(JSON.stringify(postData));
           xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
               console.log(xhr.responseText);

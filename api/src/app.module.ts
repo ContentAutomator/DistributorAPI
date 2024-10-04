@@ -3,6 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppGateway } from './app/app.gateway';
+import { VideoPromptQueueModule } from './video-prompt-queue/video-prompt-queue.module';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { AppGateway } from './app/app.gateway';
     //     },
     //   },
     // ]),
-  ],
+  VideoPromptQueueModule],
   controllers: [AppController],
   providers: [AppService, AppGateway],
 })

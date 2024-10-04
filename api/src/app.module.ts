@@ -6,20 +6,20 @@ import { AppGateway } from './app/app.gateway';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'KAFKA_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            brokers: [process.env.KAFKA_BROKERS], // Địa chỉ Kafka broker
-          },
-          consumer: {
-            groupId: 'notification-consumer', // Group ID cho Kafka consumer
-          },
-        },
-      },
-    ]),
+    // ClientsModule.register([
+    //   {
+    //     name: 'KAFKA_SERVICE',
+    //     transport: Transport.KAFKA,
+    //     options: {
+    //       client: {
+    //         brokers: [process.env.KAFKA_BROKERS], // Địa chỉ Kafka broker
+    //       },
+    //       consumer: {
+    //         groupId: 'notification-consumer', // Group ID cho Kafka consumer
+    //       },
+    //     },
+    //   },
+    // ]),
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

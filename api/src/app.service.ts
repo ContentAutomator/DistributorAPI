@@ -7,15 +7,15 @@ import { ClientKafka } from '@nestjs/microservices';
 @Injectable()
 export class AppService implements OnModuleInit {
   constructor(
-    @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
+    // @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
     private readonly appGateway: AppGateway,
   ) {}
 
   async onModuleInit() {
     // Subscribe tới các topic từ Kafka
-    this.kafkaClient.subscribeToResponseOf('notification-topic');
+    // this.kafkaClient.subscribeToResponseOf('notification-topic');
     console.log('Subscribed to notification-topic');
-    await this.kafkaClient.connect();
+    // await this.kafkaClient.connect();
     console.log('Connected to Kafka');
     // KafkaJS v2.0.0 switched default partitioner. 
     // To retain the same partitioning behavior as in previous versions, create the producer with the option "createPartitioner: Partitioners.LegacyPartitioner". 

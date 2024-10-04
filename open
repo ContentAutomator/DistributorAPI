@@ -4,4 +4,5 @@ set -xeo pipefail
 docker ps || open --hide --background -a Docker
 
 docker compose down
-docker compose up -d kafka
+# docker compose up -d kafka
+docker compose up api client

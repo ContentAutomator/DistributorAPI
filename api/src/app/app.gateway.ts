@@ -21,7 +21,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   private clientSecretKeys: Map<Socket, string> = new Map();
   constructor(
-    @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
+    // @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
   ) {}
 
   @SubscribeMessage('subscribe')
@@ -52,10 +52,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     let eventName = 'job_complete';
     // Send notification only to clients with the matching secret_key
-    this.sendNotification(JSON.stringify(job), secret_key, eventName);
+    this.sendNotification((job), secret_key, eventName);
   }
   sendNotification(
-    message: string,
+    message: any,
     secret_key: string,
     eventName: string = 'notification',
   ) {

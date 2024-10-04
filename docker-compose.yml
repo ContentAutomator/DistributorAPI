@@ -8,10 +8,10 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 1s
       timeout: 10s
-      retries: 5
+      retries: 65
     restart: on-failure
-    environment:
-      KAFKA_BROKERS: kafka:9092
+    # environment:
+      # KAFKA_BROKERS: kafka:9092
     command: ["npm", "run", "start"]
     stop_grace_period: 1s
     depends_on:
@@ -49,6 +49,9 @@ services:
       - ./client.html:/usr/share/nginx/html/index.html:ro
     ports:
       - "80:80"
+    depends_on:
+      api:
+        condition: service_healthy
   zookeeper:
     image: confluentinc/cp-zookeeper:7.7.1
     ports:

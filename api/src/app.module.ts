@@ -8,6 +8,7 @@ import { VideoPromptQueueService } from './video-prompt-queue/video-prompt-queue
 
 @Module({
   imports: [
+    VideoPromptQueueModule,
     // ClientsModule.register([
     //   {
     //     name: 'KAFKA_SERVICE',
@@ -22,16 +23,15 @@ import { VideoPromptQueueService } from './video-prompt-queue/video-prompt-queue
     //     },
     //   },
     // ]),
-    VideoPromptQueueModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],
 })
 export class AppModule implements OnModuleInit {
-  // constructor(private readonly videoPromptQueueService: VideoPromptQueueService) {}
+  constructor(private readonly videoPromptQueueService: VideoPromptQueueService) {}
 
   // When the module initializes, start the recurring job
   async onModuleInit() {
-    // await this.videoPromptQueueService.addTimeJob();
+    await this.videoPromptQueueService.addTimeJob();
   }
 }

@@ -15,7 +15,7 @@ services:
       REDIS_PASSWORD: uid-20241004072305
       REDIS_HOST: redis
       # KAFKA_BROKERS: kafka:9092
-    command: ["npm", "run", "start"]
+    command: ["yarn", "start"]
     stop_grace_period: 1s
     # depends_on:
     #   kafka:

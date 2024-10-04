@@ -31,7 +31,7 @@ export class AppController {
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   @Header('Access-Control-Allow-Methods', 'POST')
-  getHello(@Body() postData: { 
+  notifyWhenJobComplete(@Body() postData: { 
     job_id: string,
     status: string,
     video_url: string,
@@ -52,8 +52,22 @@ export class AppController {
     return 'OK';
   }
 
+  @Options('/api/v1/render-video')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  @Header('Access-Control-Allow-Methods', 'POST')
+  @Header('Access-Control-Max-Age', '3600')
+  @Header('Content-Type', 'application/json')
+  optionsRenderVideo() {
+    return 'OK';
+  }
   @Post('/api/v1/render-video')
+  @Header('Content-Type', 'application/json')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  @Header('Access-Control-Allow-Methods', 'POST')
   renderVideo(@Body() videoDetails: VideoDetailsDto) {
+    console.log('Received video details:', videoDetails);
     return this.appService.renderVideo(videoDetails);
   }
 }

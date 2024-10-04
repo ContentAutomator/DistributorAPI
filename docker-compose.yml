@@ -14,9 +14,9 @@ services:
       # KAFKA_BROKERS: kafka:9092
     command: ["npm", "run", "start"]
     stop_grace_period: 1s
-    depends_on:
-      kafka:
-        condition: service_healthy
+    # depends_on:
+    #   kafka:
+    #     condition: service_healthy
     ports:
       - "3000:3000"
     volumes:

@@ -16,7 +16,17 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    this.appService.handleMessage({ value: 'Hello from Kafka!' });
+    this.appService.handleMessage({
+      'job_id': '12345',
+      'status': 'complete',
+      'video_url': 'https://example.com/video.mp4',
+      'thumbnail_url': 'https://example.com/thumbnail.jpg',
+      'message': 'Video rendering job complete',
+      'duration': 60,
+      'resolution': '1080p',
+      'format': 'mp4',
+    }, 'secret_key');
+
     return this.appService.getHello();
   }
 

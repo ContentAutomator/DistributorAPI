@@ -1,5 +1,5 @@
 import { Module, OnModuleInit } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+// import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppGateway } from './app/app.gateway';
@@ -40,9 +40,9 @@ export class AppModule implements OnModuleInit {
   }
   // When the module initializes, start the recurring job
   async onModuleInit() {
-    await this.videoPromptQueueService.add({
-      'prompt': 'Create a lecture video on the topic of "Introduction to JavaScript"',
-      'secret_key': this.uuidv4(),
-    });
+    // await this.videoPromptQueueService.add({
+    //   'prompt': 'Create a lecture video on the topic of "Introduction to JavaScript"',
+    //   'secret_key': this.uuidv4(),
+    // });
   }
 }

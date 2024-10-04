@@ -9,12 +9,8 @@ export class VideoPromptQueueService {
   ) {}
 
   async addTimeJob() {
-    // Add a recurring job that runs every 30 seconds
-    await this.entrypointQueue.add(
-      {}, // Payload (can be empty)
-      {
-        // repeat: { every: 30000 }, // Repeat every 30 seconds (30000 ms)
-      },
-    );
+    console.log('Adding job to the queue');
+    await this.entrypointQueue.add({});
+    console.log('Job added to the queue');
   }
 }

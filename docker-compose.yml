@@ -15,11 +15,11 @@ services:
       REDIS_PASSWORD: uid-20241004072305
       REDIS_HOST: redis
       # KAFKA_BROKERS: kafka:9092
-    command: ["yarn", "start"]
+    command: ["yarn", "start:dev"]
     stop_grace_period: 1s
-    # depends_on:
-    #   kafka:
-    #     condition: service_healthy
+    depends_on:
+      redis:
+        condition: service_healthy
     ports:
       - "3000:3000"
     volumes:
@@ -92,14 +92,14 @@ services:
     depends_on:
       - zookeeper
   redis:
-    image: bitnami/redis:6.2
-    ports:
-      - "6379:6379"
+    image: bitnami/redis
+    # ports:
+    #   - "6379:6379"
     environment:
       REDIS_PASSWORD: uid-20241004072305
-      REDIS_HOST: redis-master
+      # ALLOW_EMPTY_PASSWORD: "yes"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "ping -h redis"]
       interval: 1s
       timeout: 10s
       retries: 5

@@ -7,8 +7,14 @@ import { VideoPromptQueueService } from './video-prompt-queue.service';
   imports: [
     BullModule.registerQueue({
       name: 'video-prompt-queue',
+      redis: {
+        host: process.env.REDIS_HOST,
+        password: process.env.REDIS_PASSWORD,
+        port: 6379,
+      },
     }),
   ],
+  exports: [VideoPromptQueueService],
   providers: [VideoPromptQueueService, VideoPromptQueueProcessor],
 })
 export class VideoPromptQueueModule {}

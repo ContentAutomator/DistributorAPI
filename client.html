@@ -26,7 +26,18 @@
       console.log(data.message);
     });
     let count = 0;
+    // job_complete
+    socket.on('job_complete', (data) => {
+      console.log(data.message);
+      appendNotification({ message: data.message });
+    });
 
+    function appendNotification(data) {
+      const notificationList = document.getElementById('notifications');
+      const newNotification = document.createElement('li');
+      newNotification.textContent = data.message;
+      notificationList.appendChild(newNotification);
+    }
     // Listen for notifications
     socket.on('notification', (data) => {
       if (count === 0) {
@@ -42,10 +53,7 @@
         }, 200);
       }
       count++;
-      const notificationList = document.getElementById('notifications');
-      const newNotification = document.createElement('li');
-      newNotification.textContent = data.message;
-      notificationList.appendChild(newNotification);
+      appendNotification(data);
     });
   </script>
 </body>

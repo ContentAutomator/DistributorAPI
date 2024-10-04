@@ -1,4 +1,12 @@
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Inject } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
@@ -17,7 +25,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   @SubscribeMessage('subscribe')
-  handleSubscription(@MessageBody() data: { secret_key: string }, @ConnectedSocket() client: Socket) {
+  handleSubscription(
+    @MessageBody() data: { secret_key: string },
+    @ConnectedSocket() client: Socket,
+  ) {
     const secretKey = data.secret_key;
     if (secretKey) {
       console.log('Client subscribed:', client.id);
@@ -26,17 +37,40 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit('notification', { message: 'Successfully subscribed!' });
     }
   }
-  sendNotification(message: string, secret_key: string) {
+  notifyWhenJobComplete(
+    job: {
+      job_id: string;
+      status: string;
+      video_url: string;
+      thumbnail_url: string;
+      message: string;
+      duration: number;
+      resolution: string;
+      format: string;
+    },
+    secret_key: string,
+  ) {
+    let eventName = 'job_complete';
+    // Send notification only to clients with the matching secret_key
+    this.sendNotification(JSON.stringify(job), secret_key, eventName);
+  }
+  sendNotification(
+    message: string,
+    secret_key: string,
+    eventName: string = 'notification',
+  ) {
     // Send notification only to clients with the matching secret_key
     this.clientSecretKeys.forEach((clientKey, client) => {
       if (clientKey === secret_key) {
-        client.emit('notification', { message});
+        client.emit(eventName, { message });
       }
     });
   }
   handleConnection(client: any) {
     console.log('Client connected:', client.id);
-    client.emit('notification', { message: 'Successfully connected to the server!' });
+    client.emit('notification', {
+      message: 'Successfully connected to the server!',
+    });
   }
 
   handleDisconnect(client: any) {

@@ -24,11 +24,20 @@ export class AppService implements OnModuleInit {
   }
 
   // Nhận tin nhắn từ Kafka
-  async handleMessage(message: any) {
-    console.log('Received message from Kafka:', message.value);
+  async handleMessage(job: { 
+    job_id: string, 
+    status: string, 
+    video_url: string, 
+    thumbnail_url: string, 
+    message: string, 
+    duration: number, 
+    resolution: string, 
+    format: string 
+  }, secret_key: string) {
+    console.log('Received message from Kafka:', job);
 
     // Gửi thông báo tới tất cả client qua WebSocket
-    this.appGateway.sendNotification(message.value, 'YOUR_SECRET_KEY');
+    this.appGateway.notifyWhenJobComplete(job, secret_key);
   }
   getHello(): string {
     return 'Hello World!';

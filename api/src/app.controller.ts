@@ -2,6 +2,7 @@ import {
   Controller, 
   Get,
   Body,
+  Header,
   Post 
 } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -15,6 +16,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
+  @Header('Access-Control-Allow-Origin', '*')
   getHello(): string {
     this.appService.handleMessage({
       'job_id': '12345',
@@ -25,7 +27,7 @@ export class AppController {
       'duration': 60,
       'resolution': '1080p',
       'format': 'mp4',
-    }, 'secret_key');
+    }, 'YOUR_SECRET_KEY');
 
     return this.appService.getHello();
   }

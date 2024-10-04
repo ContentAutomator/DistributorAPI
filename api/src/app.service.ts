@@ -50,6 +50,10 @@ export class AppService implements OnModuleInit {
     message: string;
     job_id: string;
   } {
+    console.log('Received video details:', videoDetails);
+    let prompt = videoDetails.prompt;
+    let secret_key = videoDetails.secret_key;
+    this.appGateway.sendNotification('Received video rendering request. Prompt: ' + prompt, secret_key);
     return {
       message: 'Video rendering job submitted successfully',
       job_id: '12345',

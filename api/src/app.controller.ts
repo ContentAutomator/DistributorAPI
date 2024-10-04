@@ -31,18 +31,10 @@ export class AppController {
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   @Header('Access-Control-Allow-Methods', 'POST')
-  notifyWhenJobComplete(@Body() postData: { 
-    job_id: string,
-    status: string,
-    video_url: string,
-    thumbnail_url: string,
-    message: string,
-    duration: number,
-    resolution: string,
-    format: string
-  }): string {
-    console.log('Received message:', postData);
-    this.appService.handleMessage(postData, 'YOUR_SECRET_KEY');
+  notifyWhenJobComplete(@Body() videoDetails: VideoDetailsDto) {
+    console.log('Received message:', videoDetails);
+    let secret_key = videoDetails.secret_key;
+    this.appService.handleMessage(videoDetails, secret_key);
 
     return this.appService.getHello();
   }

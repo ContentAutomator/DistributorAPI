@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppGateway } from './app/app.gateway';
 import { VideoPromptQueueModule } from './video-prompt-queue/video-prompt-queue.module';
+import { VideoPromptQueueService } from './video-prompt-queue/video-prompt-queue.service';
 
 @Module({
   imports: [
@@ -21,8 +22,16 @@ import { VideoPromptQueueModule } from './video-prompt-queue/video-prompt-queue.
     //     },
     //   },
     // ]),
-  VideoPromptQueueModule],
+    VideoPromptQueueModule,
+  ],
   controllers: [AppController],
   providers: [AppService, AppGateway],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  // constructor(private readonly videoPromptQueueService: VideoPromptQueueService) {}
+
+  // When the module initializes, start the recurring job
+  async onModuleInit() {
+    // await this.videoPromptQueueService.addTimeJob();
+  }
+}

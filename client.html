@@ -51,7 +51,7 @@
         message, job_id, video_url, thumbnail_url, duration, resolution, format, secret_key, status
       } = data.message;
       appendNotification({ message: "- Status: " + status });
-      if (status === '') {
+      if (status === 'complete') {
         appendNotification({ message: "- Job ID: " + job_id });
         appendNotification({ message: "- Video rendering job complete." });
         appendNotification({ message: "- Message: " + message });
@@ -78,6 +78,7 @@
         xhr.open('POST', baseUrl + '/api/v1/render-video', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({
+          'visual_prompt': 'Mathematics',
           'prompt': 'Hãy xây dựng bài giảng về "đường tròn ngoại tiếp tam giác"',
           'secret_key': secret_key
         }));

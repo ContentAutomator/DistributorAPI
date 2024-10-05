@@ -20,6 +20,7 @@
 
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   <script>
+    let baseUrl = 'http://localhost:3000'
     function uuidv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0,
@@ -27,7 +28,7 @@
         return v.toString(16);
       });
     }
-    const socket = io('http://localhost:3000'); // Connect to WebSocket server
+    const socket = io(baseUrl); // Connect to WebSocket server
     let secret_key = uuidv4(); // Replace with your secret key
 
     // Send subscribe message with the secret_key
@@ -45,15 +46,22 @@
     let count = 0;
     // job_complete
     socket.on('job_complete', (data) => {
+      console.log(data);
       let {
-        message, job_id, video_url, thumbnail_url, duration, resolution, format
+        message, job_id, video_url, thumbnail_url, duration, resolution, format, secret_key, status
       } = data.message;
-      appendNotification({ message: "- Video rendering job complete." });
-      appendNotification({ message: "- Thumbnail URL: " + thumbnail_url });
-      appendNotification({ message: "- Video URL: " + video_url });
-      appendNotification({ message: "- Duration: " + duration });
-      appendNotification({ message: "- Resolution: " + resolution });
-      appendNotification({ message: "- Format: " + format });
+      appendNotification({ message: "- Status: " + status });
+      if (status === '') {
+        appendNotification({ message: "- Job ID: " + job_id });
+        appendNotification({ message: "- Video rendering job complete." });
+        appendNotification({ message: "- Message: " + message });
+        appendNotification({ message: "- Secret Key: " + secret_key });
+        appendNotification({ message: "- Thumbnail URL: " + thumbnail_url });
+        appendNotification({ message: "- Video URL: " + video_url });
+        appendNotification({ message: "- Duration: " + duration });
+        appendNotification({ message: "- Resolution: " + resolution });
+        appendNotification({ message: "- Format: " + format });
+      }
     });
 
     function appendNotification(data) {
@@ -67,10 +75,10 @@
     socket.on('notification', (data) => {
       if (count === 0) {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://localhost:3000/api/v1/render-video', true);
+        xhr.open('POST', baseUrl + '/api/v1/render-video', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({
-          'prompt': 'Create a lecture video on the topic of "Introduction to JavaScript"',
+          'prompt': 'Hãy xây dựng bài giảng về "đường tròn ngoại tiếp tam giác"',
           'secret_key': secret_key
         }));
         setTimeout(() => {
@@ -86,7 +94,7 @@
             'secret_key': secret_key
           };
           const xhr = new XMLHttpRequest();
-          xhr.open('POST', 'http://localhost:3000/', true);
+          xhr.open('POST', baseUrl, true);
           xhr.setRequestHeader('Content-Type', 'application/json');
           xhr.send(JSON.stringify(postData));
           xhr.onreadystatechange = function () {

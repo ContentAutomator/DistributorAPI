@@ -7,17 +7,12 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import { 
-  ServerResponse,
-} from 'http';
 import { AppService } from './app.service';
 import { VideoPromptQueueService } from './video-prompt-queue/video-prompt-queue.service';
 
 import { 
   VideoDetailsDto,
 } from './dto';
-const staticFilePath = require('path').resolve(__dirname, 'static/client.html');
-const indexHtmlContent = require('fs').readFileSync(staticFilePath, 'utf8');
 
 @Controller()
 export class AppController {
@@ -52,21 +47,6 @@ export class AppController {
   @Get('/health')
   getHealth(): string {
     return 'OK';
-  }
-
-  // Serve static file ./src/static/index.html
-  @Get('/static/index.html')
-  @Header('Content-Type', 'text/html')
-  @Header('Access-Control-Allow-Origin', '*')
-  getStaticIndex() {
-    console.log('Serving static index.html');
-    // check class of req and res
-    // console.log('res:', res);
-    
-    // res.writeHead(200, {'Content-Type': 'text/html'});
-    // res.write(indexHtmlContent);
-
-    return indexHtmlContent;
   }
 
   @Options('/api/v1/render-video')

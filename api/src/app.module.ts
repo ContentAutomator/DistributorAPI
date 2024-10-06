@@ -6,9 +6,14 @@ import { AppGateway } from './app/app.gateway';
 import { VideoPromptQueueModule } from './video-prompt-queue/video-prompt-queue.module';
 import { VideoPromptQueueService } from './video-prompt-queue/video-prompt-queue.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import * as path from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: path.resolve(__dirname, 'static'),
+      serveRoot: '/static', // Optional, this is the base URL path
+    }),
     ServeStaticModule.forRoot({
       rootPath: '/app/storage/images/composite-sequences/',
       serveRoot: '/results',

@@ -13,6 +13,8 @@ COPY --chown=node:node api/src/static/ ./dist/static/
 
 FROM node:20-alpine
 RUN which curl || apk add --no-cache curl
+RUN which smbclient || apk add --no-cache samba-client
+RUN apk add --no-cache cifs-utils
 
 USER node
 WORKDIR /home/node

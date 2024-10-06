@@ -9,6 +9,7 @@ RUN yarn install
 COPY --chown=node:node api .
 
 RUN yarn build
+COPY --chown=node:node api/src/static/ ./dist/static/
 
 FROM node:20-alpine
 RUN which curl || apk add --no-cache curl

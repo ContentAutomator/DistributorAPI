@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Client</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>WebSocket Client</h1>
+  <ul id="notifications"></ul>
+
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script>
+    let baseUrl = '/'
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0,
+          v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+    const socket = io(baseUrl); // Connect to WebSocket server
+    let secret_key = uuidv4(); // Replace with your secret key
+
+    // Send subscribe message with the secret_key
+    socket.emit('subscribe', { secret_key: secret_key });
+
+    // Handle subscription success
+    socket.on('subscription_success', (data) => {
+      console.log(data.message);
+    });
+
+    // Handle subscription error (authentication failed)
+    socket.on('subscription_error', (data) => {
+      console.log(data.message);
+    });
+    let count = 0;
+    // job_complete
+    socket.on('job_complete', (data) => {
+      console.log(data);
+      let {
+        message, job_id, video_url, thumbnail_url, duration, resolution, format, secret_key, status
+      } = data.message;
+      appendNotification({ message: "- Status: " + status });
+      if (status === 'complete') {
+        appendNotification({ message: "- Job ID: " + job_id });
+        appendNotification({ message: "- Video rendering job complete." });
+        appendNotification({ message: "- Message: " + message });
+        appendNotification({ message: "- Secret Key: " + secret_key });
+        appendNotification({ message: "- Thumbnail URL: " + thumbnail_url });
+        appendNotification({ message: "- Video URL: " + video_url });
+        appendNotification({ message: "- Duration: " + duration });
+        appendNotification({ message: "- Resolution: " + resolution });
+        appendNotification({ message: "- Format: " + format });
+      }
+    });
+
+    function appendNotification(data) {
+      console.log(data);
+      const notificationList = document.getElementById('notifications');
+      const newNotification = document.createElement('li');
+      newNotification.textContent = data.message;
+      notificationList.appendChild(newNotification);
+    }
+    // Listen for notifications
+    socket.on('notification', (data) => {
+      if (count === 0) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', baseUrl + '/api/v1/render-video', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+          'visual_prompt': 'Mathematics',
+          'prompt': 'Hãy xây dựng bài giảng về "đường tròn ngoại tiếp tam giác"',
+          'secret_key': secret_key
+        }));
+        if (baseUrl.startsWith('http:')) {
+        setTimeout(() => {
+          let postData = {
+            'job_id': '12345',
+            'status': 'complete',
+            'video_url': 'https://example.com/video.mp4',
+            'thumbnail_url': 'https://example.com/thumbnail.jpg',
+            'message': 'Video rendering job complete',
+            'duration': 60,
+            'resolution': '1080p',
+            'format': 'mp4',
+            'secret_key': secret_key
+          };
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', baseUrl, true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.send(JSON.stringify(postData));
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              console.log(xhr.responseText);
+            }
+          };
+        }, 200);
+        }
+      }
+      count++;
+      appendNotification(data);
+    });
+  </script>
+</body>
+
+</html>

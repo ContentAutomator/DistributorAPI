@@ -58,14 +58,15 @@ export class AppController {
   @Get('/static/index.html')
   @Header('Content-Type', 'text/html')
   @Header('Access-Control-Allow-Origin', '*')
-  getStaticIndex(@Res() res: ServerResponse) {
+  getStaticIndex() {
+    console.log('Serving static index.html');
     // check class of req and res
-    console.log('res:', res);
+    // console.log('res:', res);
     
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(indexHtmlContent);
+    // res.writeHead(200, {'Content-Type': 'text/html'});
+    // res.write(indexHtmlContent);
 
-    return res;
+    return indexHtmlContent;
   }
 
   @Options('/api/v1/render-video')

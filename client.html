@@ -20,7 +20,7 @@
 
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   <script>
-    let baseUrl = 'http://localhost:3000'
+    let baseUrl = '/'
     function uuidv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0,
@@ -75,35 +75,37 @@
     socket.on('notification', (data) => {
       if (count === 0) {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', baseUrl + '/api/v1/render-video', true);
+        xhr.open('POST', baseUrl.replace(/\/$/, '') + '/api/v1/render-video', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({
           'visual_prompt': 'Mathematics',
           'prompt': 'Hãy xây dựng bài giảng về "đường tròn ngoại tiếp tam giác"',
           'secret_key': secret_key
         }));
-        setTimeout(() => {
-          let postData = {
-            'job_id': '12345',
-            'status': 'complete',
-            'video_url': 'https://example.com/video.mp4',
-            'thumbnail_url': 'https://example.com/thumbnail.jpg',
-            'message': 'Video rendering job complete',
-            'duration': 60,
-            'resolution': '1080p',
-            'format': 'mp4',
-            'secret_key': secret_key
-          };
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', baseUrl, true);
-          xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.send(JSON.stringify(postData));
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-              console.log(xhr.responseText);
-            }
-          };
-        }, 200);
+        if (baseUrl.startsWith('http:')) {
+          setTimeout(() => {
+            let postData = {
+              'job_id': '12345',
+              'status': 'complete',
+              'video_url': 'https://example.com/video.mp4',
+              'thumbnail_url': 'https://example.com/thumbnail.jpg',
+              'message': 'Video rendering job complete',
+              'duration': 60,
+              'resolution': '1080p',
+              'format': 'mp4',
+              'secret_key': secret_key
+            };
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', baseUrl, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(postData));
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+              }
+            };
+          }, 200);
+        }
       }
       count++;
       appendNotification(data);

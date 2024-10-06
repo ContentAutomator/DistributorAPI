@@ -159,7 +159,7 @@
           baseUrl: '/',
           secret_key: '', // Store user input for secret_key instead of generating it
           selectedVisualPrompt: '', // Store selected visual prompt
-          customPrompt: '', // Store user input for prompt
+          customPrompt: 'Hãy xây dựng bài giảng về đường tròn ngoại tiếp tam giác', // Store user input for prompt
           video_url: '', // Store the video URL
           visualPrompts: ['Mathematics', 'Science', 'History', 'Art'] // Predefined visual prompts
         };
@@ -260,7 +260,7 @@
             if (this.count === 0) {
               const postData = {
                 'visual_prompt': this.selectedVisualPrompt || 'Mathematics',
-                'prompt': this.customPrompt || 'Default prompt',
+                'prompt': this.customPrompt,
                 'secret_key': this.secret_key
               };
 

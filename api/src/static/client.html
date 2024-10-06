@@ -75,7 +75,7 @@
     socket.on('notification', (data) => {
       if (count === 0) {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', baseUrl + '/api/v1/render-video', true);
+        xhr.open('POST', baseUrl.replace(/\/$/, '') + '/api/v1/render-video', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify({
           'visual_prompt': 'Mathematics',

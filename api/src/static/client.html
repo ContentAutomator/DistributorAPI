@@ -10,6 +10,91 @@
       font-family: Arial, sans-serif;
       margin: 2rem;
       padding: 0;
+      background-color: #f4f4f9;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      margin: 0 auto 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 0.5rem 0 0.3rem;
+    }
+
+    small {
+      display: block;
+      margin: 0.3rem 0;
+      color: #777;
+      font-size: 0.85rem;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    li {
+      background-color: #e0e0e0;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    video {
+      margin-top: 1.5rem;
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-left: auto;
+      margin-right: auto;
     }
   </style>
 </head>
@@ -17,11 +102,45 @@
 <body>
   <div id="app">
     <h1>WebSocket Client</h1>
+
+    <!-- Form to select visual prompt and provide a custom prompt -->
+    <form @submit.prevent="submitForm">
+      <label for="visual_prompt">Select Visual Prompt:</label>
+      <small>Select a visual category to generate content for.</small>
+      <select id="visual_prompt" v-model="selectedVisualPrompt" required>
+        <option disabled value="">Please select one</option>
+        <option v-for="prompt in visualPrompts" :key="prompt" :value="prompt">{{ prompt }}</option>
+      </select>
+
+      <label for="prompt">Enter Prompt:</label>
+      <small>Provide a custom prompt that describes the content you want to generate.</small>
+      <input type="text" id="prompt" v-model="customPrompt" placeholder="Enter custom prompt" required>
+
+      <!-- New input field for secret_key -->
+      <label for="secret_key">Enter Secret Key:</label>
+      <small>The secret key is required for authentication. Contact the admin if you don't have one.</small>
+      <input
+        type="text"
+        id="secret_key"
+        v-model="secret_key"
+        placeholder="Please contact admin to get one"
+        required>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <!-- Notification list -->
     <ul>
       <li v-for="notification in notifications" :key="notification.id">
         {{ notification.message }}
       </li>
     </ul>
+
+    <!-- Video player - only shows when video_url is available -->
+    <video v-if="video_url" controls>
+      <source :src="video_url" type="application/x-mpegURL">
+      Your browser does not support the video tag.
+    </video>
   </div>
 
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
@@ -38,29 +157,71 @@
           count: 0,
           socket: null,
           baseUrl: '/',
-          secret_key: this.generateUUID()
+          secret_key: '', // Store user input for secret_key instead of generating it
+          selectedVisualPrompt: '', // Store selected visual prompt
+          customPrompt: '', // Store user input for prompt
+          video_url: '', // Store the video URL
+          visualPrompts: ['Mathematics', 'Science', 'History', 'Art'] // Predefined visual prompts
         };
       },
       methods: {
-        // Generate a UUID
-        generateUUID() {
-          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0,
-              v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-          });
-        },
         // Append notification to the list
         appendNotification(message) {
           this.notifications.push({ id: this.notifications.length + 1, message });
         },
+        // Send job completion data after a delay
+        sendJobCompletion() {
+          const postData = {
+            'job_id': '12345',
+            'status': 'complete',
+            'video_url': 'https://example.com/video.m3u8', // Test video URL
+            'thumbnail_url': 'https://example.com/thumbnail.jpg',
+            'message': 'Video rendering job complete',
+            'duration': 60,
+            'resolution': '1080p',
+            'format': 'mp4',
+            'secret_key': this.secret_key
+          };
+
+          setTimeout(() => {
+            this.sendPostRequest(this.baseUrl, postData);
+          }, 200);
+        },
+        // Extracted XMLHttpRequest logic
+        sendPostRequest(url, data) {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', url, true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.send(JSON.stringify(data));
+
+          xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              console.log(xhr.responseText);
+            }
+          };
+        },
+        // Handle form submission
+        submitForm() {
+          const postData = {
+            'visual_prompt': this.selectedVisualPrompt, // Selected visual prompt from the dropdown
+            'prompt': this.customPrompt, // User-entered prompt
+            'secret_key': this.secret_key // User-entered secret_key
+          };
+
+          this.sendPostRequest(this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', postData);
+
+          // Reset form after submission
+          this.selectedVisualPrompt = '';
+          this.customPrompt = '';
+          this.secret_key = ''; // Reset secret_key input
+        },
         // Setup WebSocket and listeners
         setupWebSocket() {
           this.socket = io(this.baseUrl);
-          
-          // Send subscribe message with secret_key
+
+          // Send subscribe message with user-entered secret_key
           this.socket.emit('subscribe', { secret_key: this.secret_key });
-          
+
           // Handle subscription success
           this.socket.on('subscription_success', (data) => {
             this.appendNotification("Subscription Success: " + data.message);
@@ -76,7 +237,7 @@
             let {
               message, job_id, video_url, thumbnail_url, duration, resolution, format, secret_key, status
             } = data.message;
-            
+
             this.appendNotification("- Status: " + status);
             if (status === 'completed') {
               this.appendNotification("- Job ID: " + job_id);
@@ -88,44 +249,25 @@
               this.appendNotification("- Duration: " + duration);
               this.appendNotification("- Resolution: " + resolution);
               this.appendNotification("- Format: " + format);
+
+              // Set the video URL for playback
+              this.video_url = video_url;
             }
           });
 
           // Handle general notifications
           this.socket.on('notification', (data) => {
             if (this.count === 0) {
-              const xhr = new XMLHttpRequest();
-              xhr.open('POST', this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', true);
-              xhr.setRequestHeader('Content-Type', 'application/json');
-              xhr.send(JSON.stringify({
-                'visual_prompt': 'Mathematics',
-                'prompt': 'Hãy xây dựng bài giảng về "đường tròn ngoại tiếp tam giác"',
+              const postData = {
+                'visual_prompt': this.selectedVisualPrompt || 'Mathematics',
+                'prompt': this.customPrompt || 'Default prompt',
                 'secret_key': this.secret_key
-              }));
+              };
+
+              this.sendPostRequest(this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', postData);
 
               if (this.baseUrl.startsWith('http:')) {
-                setTimeout(() => {
-                  let postData = {
-                    'job_id': '12345',
-                    'status': 'complete',
-                    'video_url': 'https://example.com/video.mp4',
-                    'thumbnail_url': 'https://example.com/thumbnail.jpg',
-                    'message': 'Video rendering job complete',
-                    'duration': 60,
-                    'resolution': '1080p',
-                    'format': 'mp4',
-                    'secret_key': this.secret_key
-                  };
-                  const xhr = new XMLHttpRequest();
-                  xhr.open('POST', this.baseUrl, true);
-                  xhr.setRequestHeader('Content-Type', 'application/json');
-                  xhr.send(JSON.stringify(postData));
-                  xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 4 && xhr.status === 200) {
-                      console.log(xhr.responseText);
-                    }
-                  };
-                }, 200);
+                this.sendJobCompletion(); // Call refactored function
               }
             }
             this.count++;

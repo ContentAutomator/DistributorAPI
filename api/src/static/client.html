@@ -51,7 +51,7 @@
         message, job_id, video_url, thumbnail_url, duration, resolution, format, secret_key, status
       } = data.message;
       appendNotification({ message: "- Status: " + status });
-      if (status === 'complete') {
+      if (status === 'completed') {
         appendNotification({ message: "- Job ID: " + job_id });
         appendNotification({ message: "- Video rendering job complete." });
         appendNotification({ message: "- Message: " + message });

@@ -114,6 +114,9 @@
 
       <label for="prompt">Enter Prompt:</label>
       <small>Provide a custom prompt that describes the content you want to generate.</small>
+      <small>
+        Leave this field empty if you want to track the previously submitted prompt.
+      </small>
       <input type="text" id="prompt" v-model="customPrompt" placeholder="Enter custom prompt" required>
 
       <!-- New input field for secret_key -->
@@ -149,6 +152,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
+    let submittedAt;
     // Vue instance
     const app = Vue.createApp({
       data() {
@@ -167,7 +171,14 @@
       methods: {
         // Append notification to the list
         appendNotification(message, video_url = null) {
-          this.notifications.push({ id: this.notifications.length + 1, message, video_url });
+          // submittedAt = new Date();
+          let notifiedAt = new Date();
+          let timeDiff = notifiedAt - submittedAt;
+          this.notifications.push({
+            id: this.notifications.length + 1,
+            message: message + ' (' + timeDiff + 'ms)',
+            video_url,
+          });
         },
         // Send job completion data after a delay
         sendJobCompletion() {
@@ -202,6 +213,9 @@
         },
         // Handle form submission
         submitForm() {
+          submittedAt = new Date();
+          // Send subscribe message with user-entered secret_key
+          this.socket.emit('subscribe', { secret_key: this.secret_key });
           const postData = {
             'visual_prompt': this.selectedVisualPrompt, // Selected visual prompt from the dropdown
             'prompt': this.customPrompt, // User-entered prompt
@@ -211,9 +225,9 @@
           this.sendPostRequest(this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', postData);
 
           // Reset form after submission
-          this.selectedVisualPrompt = '';
+          // this.selectedVisualPrompt = '';
           this.customPrompt = '';
-          this.secret_key = ''; // Reset secret_key input
+          // this.secret_key = ''; // Reset secret_key input
         },
         // Setup WebSocket and listeners
         setupWebSocket() {

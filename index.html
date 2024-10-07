@@ -114,6 +114,9 @@
 
       <label for="prompt">Enter Prompt:</label>
       <small>Provide a custom prompt that describes the content you want to generate.</small>
+      <small>
+        Leave this field empty if you want to track the previously submitted prompt.
+      </small>
       <input type="text" id="prompt" v-model="customPrompt" placeholder="Enter custom prompt" required>
 
       <!-- New input field for secret_key -->
@@ -132,15 +135,15 @@
     <!-- Notification list -->
     <ul>
       <li v-for="notification in notifications" :key="notification.id">
-        {{ notification.message }}
+        <span>{{ notification.message }}</span>
+
+        <!-- Conditionally display video player if video_url exists in the notification -->
+        <video v-if="notification.video_url" controls width="100%" style="margin-top: 1rem;">
+          <source :src="notification.video_url" type="application/x-mpegURL">
+          Your browser does not support the video tag.
+        </video>
       </li>
     </ul>
-
-    <!-- Video player - only shows when video_url is available -->
-    <video v-if="video_url" controls>
-      <source :src="video_url" type="application/x-mpegURL">
-      Your browser does not support the video tag.
-    </video>
   </div>
 
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
@@ -149,6 +152,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
+    let submittedAt;
     // Vue instance
     const app = Vue.createApp({
       data() {
@@ -157,8 +161,8 @@
           count: 0,
           socket: null,
           baseUrl: '/',
-          secret_key: '', // Store user input for secret_key instead of generating it
-          selectedVisualPrompt: '', // Store selected visual prompt
+          secret_key: 'please-contact-admin-to-get-one', // Store user input for secret_key instead of generating it
+          selectedVisualPrompt: 'Mathematics', // Store selected visual prompt
           customPrompt: 'Hãy xây dựng bài giảng về đường tròn ngoại tiếp tam giác', // Store user input for prompt
           video_url: '', // Store the video URL
           visualPrompts: ['Mathematics', 'Science', 'History', 'Art'] // Predefined visual prompts
@@ -166,8 +170,15 @@
       },
       methods: {
         // Append notification to the list
-        appendNotification(message) {
-          this.notifications.push({ id: this.notifications.length + 1, message });
+        appendNotification(message, video_url = null) {
+          // submittedAt = new Date();
+          let notifiedAt = new Date();
+          let timeDiff = notifiedAt - submittedAt;
+          this.notifications.push({
+            id: this.notifications.length + 1,
+            message: message + ' (' + timeDiff + 'ms)',
+            video_url,
+          });
         },
         // Send job completion data after a delay
         sendJobCompletion() {
@@ -202,6 +213,9 @@
         },
         // Handle form submission
         submitForm() {
+          submittedAt = new Date();
+          // Send subscribe message with user-entered secret_key
+          this.socket.emit('subscribe', { secret_key: this.secret_key });
           const postData = {
             'visual_prompt': this.selectedVisualPrompt, // Selected visual prompt from the dropdown
             'prompt': this.customPrompt, // User-entered prompt
@@ -211,9 +225,9 @@
           this.sendPostRequest(this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', postData);
 
           // Reset form after submission
-          this.selectedVisualPrompt = '';
+          // this.selectedVisualPrompt = '';
           this.customPrompt = '';
-          this.secret_key = ''; // Reset secret_key input
+          // this.secret_key = ''; // Reset secret_key input
         },
         // Setup WebSocket and listeners
         setupWebSocket() {
@@ -245,13 +259,14 @@
               this.appendNotification("- Message: " + message);
               this.appendNotification("- Secret Key: " + secret_key);
               this.appendNotification("- Thumbnail URL: " + thumbnail_url);
-              this.appendNotification("- Video URL: " + video_url);
               this.appendNotification("- Duration: " + duration);
               this.appendNotification("- Resolution: " + resolution);
               this.appendNotification("- Format: " + format);
 
-              // Set the video URL for playback
-              this.video_url = video_url;
+              // Append the video as a notification if video_url is present
+              if (video_url) {
+                this.appendNotification("- Video is ready to play!", video_url);
+              }
             }
           });
 

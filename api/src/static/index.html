@@ -105,43 +105,61 @@
 
     <!-- Form to select visual prompt and provide a custom prompt -->
     <form @submit.prevent="submitForm">
-      <label for="visual_prompt">Select Visual Prompt:</label>
-      <small>Select a visual category to generate content for.</small>
+      <label for="visual_prompt">
+        Chọn Prompt cho hình ảnh:
+      </label>
+      <small>
+        Chọn một danh mục hình ảnh để tạo nội dung.
+        Lưu ý nếu bạn chọn sai danh mục, quá trình tạo video sẽ mất thời gian.
+      </small>
       <select id="visual_prompt" v-model="selectedVisualPrompt" required>
-        <option disabled value="">Please select one</option>
+        <option disabled value="">
+          Please select one
+        </option>
         <option v-for="prompt in visualPrompts" :key="prompt" :value="prompt">{{ prompt }}</option>
       </select>
 
-      <label for="prompt">Enter Prompt:</label>
-      <small>Provide a custom prompt that describes the content you want to generate.</small>
+      <label for="prompt">
+        Nhập prompt:
+      </label>
       <small>
-        Leave this field empty if you want to track the previously submitted prompt.
+        Cung cấp prompt tùy chỉnh mô tả nội dung bạn muốn tạo.
       </small>
-      <input type="text" id="prompt" v-model="customPrompt" placeholder="Enter custom prompt" required>
+      <input type="text" id="prompt" v-model="customPrompt" placeholder="Nhập prompt tùy chỉnh" required>
 
       <!-- New input field for secret_key -->
-      <label for="secret_key">Enter Secret Key:</label>
-      <small>The secret key is required for authentication. Contact the admin if you don't have one.</small>
-      <input type="text" id="secret_key" v-model="secret_key" placeholder="Please contact admin to get one" required>
+      <label for="secret_key">
+        <!-- Enter Secret Key: -->
+        Nhập Secret Key:
+      </label>
+      <small>
+        Secret key là bắt buộc để xác thực. Liên hệ admin nếu bạn chưa có.
+      </small>
+      <input type="text" id="secret_key" v-model="secret_key" placeholder="Liên hệ admin để lấy Secret Key" required>
 
-      <button type="submit">Submit</button>
+      <button type="submit">
+        Submit
+      </button>
     </form>
 
     <!-- Notification list -->
     <ul>
       <li>
-        While waiting for the video to render, you can submit another prompt and it will be rendered concurrently.
+        Trong khi chờ video được tạo, bạn có thể gửi prompt khác và quá trình tạo video sẽ được thực hiện song song.
+        <!-- While waiting for the video to render, you can submit another prompt and it will be rendered concurrently. -->
       </li>
       <li v-for="notification in notifications" :key="notification.id">
         <span>{{ notification.message }}</span>
 
         <!-- Conditionally display video player if video_url exists in the notification -->
         <video v-if="notification.video_url" controls width="100%" style="margin-top: 1rem;" onerror="this.style.display='none'">
-          <source :src="notification.video_url" type="application/x-mpegURL">
+          <source :src="notification.video_url" type="video/mp4">
           Your browser does not support the video tag.
         </video>
         <a v-if="notification.video_url" :href="notification.video_url" download>
-          <small>Click to download the video</small>
+          <small>
+            Click to download the video
+          </small>
         </a>
       </li>
     </ul>

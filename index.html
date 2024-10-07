@@ -136,10 +136,13 @@
         <span>{{ notification.message }}</span>
 
         <!-- Conditionally display video player if video_url exists in the notification -->
-        <video v-if="notification.video_url" controls width="100%" style="margin-top: 1rem;">
+        <video v-if="notification.video_url" controls width="100%" style="margin-top: 1rem;" onerror="this.style.display='none'">
           <source :src="notification.video_url" type="application/x-mpegURL">
           Your browser does not support the video tag.
         </video>
+        <a v-if="notification.video_url" :href="notification.video_url" download>
+          <small>Click to download the video</small>
+        </a>
       </li>
     </ul>
   </div>
@@ -151,13 +154,14 @@
 
   <script>
     let submittedAt = new Date();
+    let baseUrl = 'https://http-distributor-api-apis-production-80.schnworks.com/';
     const app = Vue.createApp({
       data() {
         return {
           notifications: [], // Store notifications reactively
           count: 0,
           socket: null,
-          baseUrl: 'https://http-distributor-api-apis-production-80.schnworks.com/',
+          baseUrl,
           secret_key: 'please-contact-admin-to-get-one', // Default secret key
           selectedVisualPrompt: 'Geometry', // Store selected visual prompt
           customPrompt: 'Hãy xây dựng bài giảng về đường tròn ngoại tiếp tam giác', // Store user input for prompt
@@ -256,7 +260,7 @@
               this.appendNotification("- Format: " + format);
 
               if (video_url) {
-                this.appendNotification("- Video is ready to play!", video_url);
+                this.appendNotification("- Video is ready to play!", baseUrl + video_url.replace(/^\/+/, ''));
               }
             }
           });

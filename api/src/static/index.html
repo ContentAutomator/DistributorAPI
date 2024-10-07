@@ -122,12 +122,7 @@
       <!-- New input field for secret_key -->
       <label for="secret_key">Enter Secret Key:</label>
       <small>The secret key is required for authentication. Contact the admin if you don't have one.</small>
-      <input
-        type="text"
-        id="secret_key"
-        v-model="secret_key"
-        placeholder="Please contact admin to get one"
-        required>
+      <input type="text" id="secret_key" v-model="secret_key" placeholder="Please contact admin to get one" required>
 
       <button type="submit">Submit</button>
     </form>
@@ -152,8 +147,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
-    let submittedAt;
-    // Vue instance
+    let submittedAt = new Date();
     const app = Vue.createApp({
       data() {
         return {
@@ -161,7 +155,7 @@
           count: 0,
           socket: null,
           baseUrl: '/',
-          secret_key: 'please-contact-admin-to-get-one', // Store user input for secret_key instead of generating it
+          secret_key: 'please-contact-admin-to-get-one', // Default secret key
           selectedVisualPrompt: 'Mathematics', // Store selected visual prompt
           customPrompt: 'Hãy xây dựng bài giảng về đường tròn ngoại tiếp tam giác', // Store user input for prompt
           video_url: '', // Store the video URL
@@ -169,23 +163,20 @@
         };
       },
       methods: {
-        // Append notification to the list
         appendNotification(message, video_url = null) {
-          // submittedAt = new Date();
           let notifiedAt = new Date();
           let timeDiff = notifiedAt - submittedAt;
           this.notifications.push({
             id: this.notifications.length + 1,
-            message: message + ' (' + timeDiff + 'ms)',
+            message: '[' + timeDiff + 'ms] ' + message,
             video_url,
           });
         },
-        // Send job completion data after a delay
         sendJobCompletion() {
           const postData = {
             'job_id': '12345',
             'status': 'complete',
-            'video_url': 'https://example.com/video.m3u8', // Test video URL
+            'video_url': 'https://example.com/video.m3u8',
             'thumbnail_url': 'https://example.com/thumbnail.jpg',
             'message': 'Video rendering job complete',
             'duration': 60,
@@ -198,7 +189,6 @@
             this.sendPostRequest(this.baseUrl, postData);
           }, 200);
         },
-        // Extracted XMLHttpRequest logic
         sendPostRequest(url, data) {
           const xhr = new XMLHttpRequest();
           xhr.open('POST', url, true);
@@ -211,42 +201,39 @@
             }
           };
         },
-        // Handle form submission
         submitForm() {
           submittedAt = new Date();
+
+          // Save the secret_key to localStorage
+          localStorage.setItem('secret_key', this.secret_key);
+
           // Send subscribe message with user-entered secret_key
           this.socket.emit('subscribe', { secret_key: this.secret_key });
+
           const postData = {
-            'visual_prompt': this.selectedVisualPrompt, // Selected visual prompt from the dropdown
-            'prompt': this.customPrompt, // User-entered prompt
-            'secret_key': this.secret_key // User-entered secret_key
+            'visual_prompt': this.selectedVisualPrompt,
+            'prompt': this.customPrompt,
+            'secret_key': this.secret_key
           };
 
           this.sendPostRequest(this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', postData);
 
-          // Reset form after submission
-          // this.selectedVisualPrompt = '';
           this.customPrompt = '';
-          // this.secret_key = ''; // Reset secret_key input
         },
-        // Setup WebSocket and listeners
         setupWebSocket() {
           this.socket = io(this.baseUrl);
 
           // Send subscribe message with user-entered secret_key
           this.socket.emit('subscribe', { secret_key: this.secret_key });
 
-          // Handle subscription success
           this.socket.on('subscription_success', (data) => {
             this.appendNotification("Subscription Success: " + data.message);
           });
 
-          // Handle subscription error
           this.socket.on('subscription_error', (data) => {
             this.appendNotification("Subscription Error: " + data.message);
           });
 
-          // Handle job complete event
           this.socket.on('job_complete', (data) => {
             let {
               message, job_id, video_url, thumbnail_url, duration, resolution, format, secret_key, status
@@ -263,14 +250,12 @@
               this.appendNotification("- Resolution: " + resolution);
               this.appendNotification("- Format: " + format);
 
-              // Append the video as a notification if video_url is present
               if (video_url) {
                 this.appendNotification("- Video is ready to play!", video_url);
               }
             }
           });
 
-          // Handle general notifications
           this.socket.on('notification', (data) => {
             if (this.count === 0) {
               const postData = {
@@ -282,7 +267,7 @@
               this.sendPostRequest(this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', postData);
 
               if (this.baseUrl.startsWith('http:')) {
-                this.sendJobCompletion(); // Call refactored function
+                this.sendJobCompletion();
               }
             }
             this.count++;
@@ -291,11 +276,15 @@
         }
       },
       mounted() {
-        this.setupWebSocket(); // Initialize WebSocket when Vue instance is mounted
+        const storedSecretKey = localStorage.getItem('secret_key');
+        if (storedSecretKey) {
+          this.secret_key = storedSecretKey;
+        }
+
+        this.setupWebSocket();
       }
     });
 
-    // Mount Vue app to #app
     app.mount('#app');
   </script>
 </body>

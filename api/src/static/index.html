@@ -166,7 +166,9 @@
         appendNotification(message, video_url = null) {
           let notifiedAt = new Date();
           let timeDiff = notifiedAt - submittedAt;
-          this.notifications.push({
+          this.notifications.unshift({
+            // to publish /static/ folder on free public static server
+            // You can use Cloudflare Pages, Vercel, Netlify, or GitHub Pages
             id: this.notifications.length + 1,
             message: '[' + timeDiff + 'ms] ' + message,
             video_url,

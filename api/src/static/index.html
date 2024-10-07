@@ -156,10 +156,10 @@
           socket: null,
           baseUrl: '/',
           secret_key: 'please-contact-admin-to-get-one', // Default secret key
-          selectedVisualPrompt: 'Mathematics', // Store selected visual prompt
+          selectedVisualPrompt: 'Geometry', // Store selected visual prompt
           customPrompt: 'Hãy xây dựng bài giảng về đường tròn ngoại tiếp tam giác', // Store user input for prompt
           video_url: '', // Store the video URL
-          visualPrompts: ['Mathematics', 'Science', 'History', 'Art'] // Predefined visual prompts
+          visualPrompts: ['Geometry', 'Mathematics', 'Science', 'History', 'Art'] // Predefined visual prompts
         };
       },
       methods: {
@@ -257,19 +257,19 @@
           });
 
           this.socket.on('notification', (data) => {
-            if (this.count === 0) {
-              const postData = {
-                'visual_prompt': this.selectedVisualPrompt || 'Mathematics',
-                'prompt': this.customPrompt,
-                'secret_key': this.secret_key
-              };
+            // if (this.count === 0) {
+              // const postData = {
+              //   'visual_prompt': this.selectedVisualPrompt || 'Mathematics',
+              //   'prompt': this.customPrompt,
+              //   'secret_key': this.secret_key
+              // };
 
-              this.sendPostRequest(this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', postData);
+              // this.sendPostRequest(this.baseUrl.replace(/\/$/, '') + '/api/v1/render-video', postData);
 
-              if (this.baseUrl.startsWith('http:')) {
-                this.sendJobCompletion();
-              }
-            }
+              // if (this.baseUrl.startsWith('http:')) {
+              //   this.sendJobCompletion();
+              // }
+            // }
             this.count++;
             this.appendNotification(data.message);
           });

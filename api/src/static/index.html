@@ -53,6 +53,16 @@
         Submit
       </button>
     </form>
+    <table>
+      <tr>
+        <th>Prompt</th>
+        <th v-for="step in steps" :key="step">{{ step }}</th>
+      </tr>
+      <tr v-for="videoDetail in videoDetails" :key="videoDetail.prompt">
+        <td>{{ videoDetail.prompt }}</td>
+        <td v-for="step in steps" :key="step">{{ videoDetail[step] }}</td>
+      </tr>
+    </table>
 
     <!-- Notification list -->
     <ul>
@@ -91,6 +101,16 @@
           notifications: [], // Store notifications reactively
           count: 0,
           socket: null,
+          steps: [
+            "writing_down_ideas",
+            "planning_episodes",
+            "defining_target_audience",
+            "step_1",
+            "step_2",
+            "step_3",
+            "step_3.1",
+          ],
+          videoDetails: [],
           baseUrl,
           secret_key: 'please-contact-admin-to-get-one', // Default secret key
           selectedVisualPrompt: 'Geometry', // Store selected visual prompt
@@ -159,6 +179,26 @@
 
           this.customPrompt = '';
         },
+        updateGanttChart(message) {
+          console.log(message);
+          if (this.videoDetails.filter((item) => item.prompt === message.prompt).length === 0) {
+            this.videoDetails.push({
+              prompt: message.prompt,
+              ...this.$data.steps.reduce((acc, step) => {
+                acc[step] = '';
+                return acc;
+              }, {})
+            });
+          }
+          //
+          console.log(this.videoDetails, message.status);
+          for (let i = 0; i < this.videoDetails.length; i++) {
+            if (this.videoDetails[i].prompt === message.prompt) {
+              this.videoDetails[i][message.status] = '✅';
+              break;
+            }
+          }
+        },
         setupWebSocket() {
           this.socket = io(this.baseUrl);
 
@@ -175,14 +215,16 @@
 
           this.socket.on('job_complete', (data) => {
             let {
+              prompt: prompt,
               message, job_id, video_url, thumbnail_url, duration, resolution, format, secret_key, status
             } = data.message;
+            this.updateGanttChart(data.message);
 
             this.appendNotification("- Status: " + status);
+            this.appendNotification("- Prompt: " + prompt);
             if (status === 'completed') {
               this.appendNotification("- Job ID: " + job_id);
               this.appendNotification("- Video rendering job complete.");
-              this.appendNotification("- Message: " + message);
               this.appendNotification("- Secret Key: " + secret_key);
               this.appendNotification("- Thumbnail URL: " + thumbnail_url);
               this.appendNotification("- Duration: " + duration);

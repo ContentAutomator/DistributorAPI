@@ -27,7 +27,7 @@
         </style>
         <span v-for="visualPrompt in visualPrompts" :key="visualPrompt" @click="selectedVisualPrompt = visualPrompt"
           :class="{ 'selected': selectedVisualPrompt === visualPrompt }" class="visual-prompt">
-            {{ visualPrompt }} 
+          {{ visualPrompt }}
         </span>
       </div>
 
@@ -75,7 +75,8 @@
         <span>{{ notification.message }}</span>
 
         <!-- Conditionally display video player if video_url exists in the notification -->
-        <video v-if="notification.video_url" controls width="100%" style="margin-top: 1rem;" onerror="this.style.display='none'">
+        <video v-if="notification.video_url" controls width="100%" style="margin-top: 1rem;"
+          onerror="this.style.display='none'">
           <source :src="notification.video_url" type="video/mp4">
           Your browser does not support the video tag.
         </video>
@@ -92,8 +93,20 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.4/vue.global.prod.min.js"
     integrity="sha512-daXDxACuUMgdw50LypY68sSM7Qksm/pJ207U8xLSv30B9J9YhU3wvHRZotKhBppjPgmatS6Cf2nkNxaImiHNyg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/dayjs.min.js"
+    integrity="sha512-FwNWaxyfy2XlEINoSnZh1JQ5TRRtGow0D6XcmAWmYCRgvqOUTnzCxPc9uF35u5ZEpirk1uhlPVA19tflhvnW1g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/plugin/duration.min.js"
+    integrity="sha512-t0b2NyBypSms8nA81pldWo0mXbfMotsdYgvs4awmbi/GU/25YBNLnXj+I9DAMV7WGZ8+z8wtRolX7zSF2LN8UQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/plugin/relativeTime.min.js"
+    integrity="sha512-MVzDPmm7QZ8PhEiqJXKz/zw2HJuv61waxb8XXuZMMs9b+an3LoqOqhOEt5Nq3LY1e4Ipbbd/e+AWgERdHlVgaA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
+    dayjs.extend(window.dayjs_plugin_duration);
+    dayjs.extend(window.dayjs_plugin_relativeTime);
+
     let submittedAt = new Date();
     let baseUrl = 'https://http-distributor-api-apis-production-80.schnworks.com/';
     const app = Vue.createApp({
@@ -129,23 +142,28 @@
           video_url: '', // Store the video URL
           visualPrompts: [
             'Entrepreneurship',
-            'Geometry', 
-            'Mathematics', 
-            'Science', 
-            'History', 
+            'Geometry',
+            'Mathematics',
+            'Science',
+            'History',
             'Art'
           ] // Predefined visual prompts
         };
       },
       methods: {
         appendNotification(message, video_url = null) {
-          let notifiedAt = new Date();
-          let timeDiff = notifiedAt - submittedAt;
+          // const start = dayjs('2023-10-01');
+          // const end = dayjs('2023-10-05');
+          let start = dayjs(submittedAt);
+          let end = dayjs(new Date());
+          const humanReadableDiff = dayjs.duration(end.diff(start)).humanize();
+          // let notifiedAt = new Date();
+          // let timeDiff = notifiedAt - submittedAt;
           this.notifications.unshift({
             // to publish /static/ folder on free public static server
             // You can use Cloudflare Pages, Vercel, Netlify, or GitHub Pages
             id: this.notifications.length + 1,
-            message: '[' + timeDiff + 'ms] ' + message,
+            message: '[' + humanReadableDiff + '] ' + message,
             video_url,
           });
         },
@@ -280,7 +298,10 @@
           this.secret_key = storedSecretKey;
         }
 
-        this.setupWebSocket();
+        let ct = this;
+        setTimeout(() => {
+          ct.setupWebSocket();
+        }, 3e3);
       }
     });
 

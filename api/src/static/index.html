@@ -22,12 +22,13 @@
           Chọn một danh mục hình ảnh để tạo nội dung.
           Lưu ý nếu bạn chọn sai danh mục, quá trình tạo video sẽ mất thời gian.
         </small>
-        <select id="visual_prompt" v-model="selectedVisualPrompt" required>
-          <option disabled value="">
-            Please select one
-          </option>
-          <option v-for="prompt in visualPrompts" :key="prompt" :value="prompt">{{ prompt }}</option>
-        </select>
+        <input type="text" id="prompt" v-model="selectedVisualPrompt" placeholder="Nhập prompt tùy chỉnh" required>
+        <style>
+        </style>
+        <span v-for="visualPrompt in visualPrompts" :key="visualPrompt" @click="selectedVisualPrompt = visualPrompt"
+          :class="{ 'selected': selectedVisualPrompt === visualPrompt }" class="visual-prompt">
+            {{ visualPrompt }} 
+        </span>
       </div>
 
       <div v-show="secret_key && secret_key !== 'please-contact-admin-to-get-one'">
@@ -126,7 +127,14 @@
           selectedVisualPrompt: 'Geometry', // Store selected visual prompt
           customPrompt: 'Hãy xây dựng bài giảng về đường tròn ngoại tiếp tam giác', // Store user input for prompt
           video_url: '', // Store the video URL
-          visualPrompts: ['Geometry', 'Mathematics', 'Science', 'History', 'Art'] // Predefined visual prompts
+          visualPrompts: [
+            'Entrepreneurship',
+            'Geometry', 
+            'Mathematics', 
+            'Science', 
+            'History', 
+            'Art'
+          ] // Predefined visual prompts
         };
       },
       methods: {

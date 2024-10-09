@@ -119,3 +119,21 @@ table tr:hover {
 table tr:hover td {
   color: #333;
 }
+
+
+span.visual-prompt {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+span.visual-prompt:hover {
+  cursor: pointer;
+  background-color: #f8f9fa;
+}
+span.visual-prompt.selected {
+  background-color: #007bff;
+  color: white;
+}

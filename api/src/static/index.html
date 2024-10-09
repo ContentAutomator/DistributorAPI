@@ -50,7 +50,7 @@
       </small>
       <input type="text" id="secret_key" v-model="secret_key" placeholder="Liên hệ admin để lấy Secret Key" required>
 
-      <button type="submit">
+      <button type="submit" :class="{ 'btn-disabled': (socketIsConnected === false || !secret_key || secret_key === 'please-contact-admin-to-get-one') }">
         Submit
       </button>
     </form>
@@ -114,6 +114,7 @@
         return {
           notifications: [], // Store notifications reactively
           count: 0,
+          socketIsConnected: false,
           socket: null,
           steps: [
             "writing_down_ideas",
@@ -131,14 +132,14 @@
             "step_7",
             "step_7.2. importing media",
             "step_8",
-            "exporting",
             "final reviewing",
+            "exporting",
           ],
           videoDetails: [],
           baseUrl,
           secret_key: 'please-contact-admin-to-get-one', // Default secret key
-          selectedVisualPrompt: 'Geometry', // Store selected visual prompt
-          customPrompt: 'Hãy xây dựng bài giảng về đường tròn ngoại tiếp tam giác', // Store user input for prompt
+          selectedVisualPrompt: 'Entrepreneurship', // Store selected visual prompt
+          customPrompt: 'Hãy xây dựng bài giảng về indie hacker', // Store user input for prompt
           video_url: '', // Store the video URL
           visualPrompts: [
             'Entrepreneurship',
@@ -216,6 +217,12 @@
           this.customPrompt = '';
         },
         updateGanttChart(message) {
+          let {
+            status,
+          } = message;
+          if (status && status.startsWith('final reviewing')) {
+            status = 'final reviewing';
+          }
           console.log(message);
           if (this.videoDetails.filter((item) => item.prompt === message.prompt).length === 0) {
             this.videoDetails.push({
@@ -230,7 +237,11 @@
           console.log(this.videoDetails, message.status);
           for (let i = 0; i < this.videoDetails.length; i++) {
             if (this.videoDetails[i].prompt === message.prompt) {
-              this.videoDetails[i][message.status] = '✅';
+              if ('' === this.videoDetails[i][status]) {
+                this.videoDetails[i][status] = '✅';
+              }else{
+                this.videoDetails[i][status] = this.videoDetails[i][status] + '✅';
+              }
               break;
             }
           }
@@ -274,6 +285,7 @@
           });
 
           this.socket.on('notification', (data) => {
+            this.socketIsConnected = true;
             // if (this.count === 0) {
             // const postData = {
             //   'visual_prompt': this.selectedVisualPrompt || 'Mathematics',

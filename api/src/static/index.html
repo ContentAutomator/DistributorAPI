@@ -53,7 +53,7 @@
         Submit
       </button>
     </form>
-    <table>
+    <table v-show="videoDetails.length > 0">
       <tr>
         <th>Prompt</th>
         <th v-for="step in steps" :key="step">{{ step }}</th>

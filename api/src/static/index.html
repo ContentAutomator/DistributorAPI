@@ -5,98 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WebSocket Client with Vue.js</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      padding: 0;
-      background-color: #f4f4f9;
-    }
-
-    h1 {
-      text-align: center;
-      color: #333;
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-    }
-
-    form {
-      background-color: #fff;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-width: 500px;
-      margin: 0 auto 1.5rem;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin: 0.5rem 0 0.3rem;
-    }
-
-    small {
-      display: block;
-      margin: 0.3rem 0;
-      color: #777;
-      font-size: 0.85rem;
-    }
-
-    select,
-    input {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    button {
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    li {
-      background-color: #e0e0e0;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-
-    video {
-      margin-top: 1.5rem;
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-      display: block;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      margin-left: auto;
-      margin-right: auto;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -105,28 +14,31 @@
 
     <!-- Form to select visual prompt and provide a custom prompt -->
     <form @submit.prevent="submitForm">
-      <label for="visual_prompt">
-        Chọn Prompt cho hình ảnh:
-      </label>
-      <small>
-        Chọn một danh mục hình ảnh để tạo nội dung.
-        Lưu ý nếu bạn chọn sai danh mục, quá trình tạo video sẽ mất thời gian.
-      </small>
-      <select id="visual_prompt" v-model="selectedVisualPrompt" required>
-        <option disabled value="">
-          Please select one
-        </option>
-        <option v-for="prompt in visualPrompts" :key="prompt" :value="prompt">{{ prompt }}</option>
-      </select>
+      <div v-show="secret_key && secret_key !== 'please-contact-admin-to-get-one'">
+        <label for="visual_prompt">
+          Chọn Prompt cho hình ảnh:
+        </label>
+        <small>
+          Chọn một danh mục hình ảnh để tạo nội dung.
+          Lưu ý nếu bạn chọn sai danh mục, quá trình tạo video sẽ mất thời gian.
+        </small>
+        <select id="visual_prompt" v-model="selectedVisualPrompt" required>
+          <option disabled value="">
+            Please select one
+          </option>
+          <option v-for="prompt in visualPrompts" :key="prompt" :value="prompt">{{ prompt }}</option>
+        </select>
+      </div>
 
-      <label for="prompt">
-        Nhập prompt:
-      </label>
-      <small>
-        Cung cấp prompt tùy chỉnh mô tả nội dung bạn muốn tạo.
-      </small>
-      <input type="text" id="prompt" v-model="customPrompt" placeholder="Nhập prompt tùy chỉnh" required>
-
+      <div v-show="secret_key && secret_key !== 'please-contact-admin-to-get-one'">
+        <label for="prompt">
+          Nhập prompt:
+        </label>
+        <small>
+          Cung cấp prompt tùy chỉnh mô tả nội dung bạn muốn tạo.
+        </small>
+        <input type="text" id="prompt" v-model="customPrompt" placeholder="Nhập prompt tùy chỉnh" required>
+      </div>
       <!-- New input field for secret_key -->
       <label for="secret_key">
         <!-- Enter Secret Key: -->

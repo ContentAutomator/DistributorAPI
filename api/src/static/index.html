@@ -239,8 +239,8 @@
             this.updateGanttChart(data.message);
 
             this.appendNotification("- Status: " + status);
-            this.appendNotification("- Prompt: " + prompt);
             if (status === 'completed') {
+              this.appendNotification("- Prompt: " + prompt);
               this.appendNotification("- Job ID: " + job_id);
               this.appendNotification("- Video rendering job complete.");
               this.appendNotification("- Secret Key: " + secret_key);

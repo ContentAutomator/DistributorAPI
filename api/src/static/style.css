@@ -44,6 +44,18 @@ input {
   border: 1px solid #ccc;
   box-sizing: border-box;
 }
+textarea#prompt {
+  height: 100px;
+  resize: none;
+
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
 
 button {
   width: 100%;

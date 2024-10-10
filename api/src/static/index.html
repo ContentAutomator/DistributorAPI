@@ -207,7 +207,7 @@
           this.socket.emit('subscribe', { secret_key: this.secret_key });
 
           const postData = {
-            'visual_prompt': this.selectedVisualPrompt,
+            // 'visual_prompt': this.selectedVisualPrompt,
             'prompt': this.customPrompt,
             'secret_key': this.secret_key
           };
@@ -241,6 +241,11 @@
                 this.videoDetails[i][status] = '✅';
               }else{
                 this.videoDetails[i][status] = this.videoDetails[i][status] + '✅';
+                // 
+                // ✅ ✅ ✅ ✅ 80%
+                // ✅ ✅ ✅ 60%
+                // ✅ ✅ ✅ ✅ ✅ 100%
+                // ✅ ✅ 40%
               }
               break;
             }

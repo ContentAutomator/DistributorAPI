@@ -72,10 +72,10 @@ export class VideoDetailsDto {
   @IsNotEmpty()
   thumbnail_url?: string;
 
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty()
-  visual_prompt: string;
+  // @IsOptional()
+  // @IsString()
+  // @IsNotEmpty()
+  // visual_prompt: string;
 
   @IsOptional()
   @IsNotEmpty()

@@ -71,7 +71,6 @@
         <td v-for="step in steps" :key="step">{{ videoDetail[step] }}</td>
         <td>
           <div v-for="item in videoDetail.final_reviewing" :key="item.id">
-            {{ item.id }}: {{ item.current }}/{{ item.total }}
             {{ item.visual }}
           </div>
         </td>

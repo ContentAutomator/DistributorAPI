@@ -283,6 +283,16 @@
                   }
                 }
               }else{
+                if (status.startsWith('exporting')){
+                  // exporting 2/5
+                  let matcher = /exporting (\d+)\/(\d+)/;
+                  let match = matcher.exec(message.status);
+                  console.log(match, status);
+                  if (match) {
+                    let [_, current, total] = match;
+                    this.videoDetails[i].exporting = '✅'.repeat(current) + '⏳'.repeat(total - current);
+                  }
+                }else{
                 if ('' === this.videoDetails[i][status]) {
                   this.videoDetails[i][status] = '✅';
                 }else{
@@ -292,6 +302,7 @@
                   // ✅ ✅ ✅ 60%
                   // ✅ ✅ ✅ ✅ ✅ 100%
                   // ✅ ✅ 40%
+                }
                 }
               }
               break;

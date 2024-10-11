@@ -233,7 +233,7 @@
           let {
             status,
           } = message;
-          console.log(message);
+          // console.log(message);
           if (this.videoDetails.filter((item) => item.prompt === message.prompt).length === 0) {
             this.videoDetails.push({
               prompt: message.prompt,
@@ -246,16 +246,21 @@
             });
           }
           //
-          console.log(this.videoDetails, message.status);
+          // console.log(this.videoDetails, message.status);
           for (let i = 0; i < this.videoDetails.length; i++) {
             if (this.videoDetails[i].prompt === message.prompt) {
-              // final reviewing 5 out of 5 1/5
+              // console.log("Found", this.videoDetails[i]);
               if (status.startsWith('final reviewing')) {
+                // console.log("Final reviewing", message.status);
                 let matcher = /final reviewing (\d+) out of (\d+) (\d+)\/(\d+)/;
                 let match = matcher.exec(message.status);
+                console.log(match, status);
                 if (match) {
                   let [_, id, total1, current, total] = match;
-                  let final_reviewing_item = this.videoDetails[i].final_reviewing[id];
+                  let final_reviewing_item = this.videoDetails[i].final_reviewing
+                    .filter((item) => item.id === id)[0];
+                  console.log(final_reviewing_item);
+                  console.log(typeof final_reviewing_item);
                   if (typeof final_reviewing_item === 'undefined') {
                     this.videoDetails[i].final_reviewing.push({
                       total: 0,
@@ -268,6 +273,7 @@
                     if (this.videoDetails[i].final_reviewing[j].id === id) {
                       this.videoDetails[i].final_reviewing[j].total = total;
                       this.videoDetails[i].final_reviewing[j].current = current;
+                      console.log('Final reviewing', this.videoDetails[i].final_reviewing[j]);
                       break;
                     }
                   }

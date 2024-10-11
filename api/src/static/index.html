@@ -69,12 +69,15 @@
       <tr v-for="videoDetail in videoDetails" :key="videoDetail.prompt">
         <td>{{ videoDetail.prompt }}</td>
         <td v-for="step in steps" :key="step">{{ videoDetail[step] }}</td>
-      </tr>
-      <tr>
-        {{ videoDetails.final_reviewing }}
-      </tr>
-      <tr>
-        {{ videoDetails.exporting }}
+        <td>
+          <div v-for="item in videoDetail.final_reviewing" :key="item.id">
+            {{ item.id }}: {{ item.current }}/{{ item.total }}
+            {{ item.visual }}
+          </div>
+        </td>
+        <td>
+          {{ videoDetail.exporting }}
+        </td>
       </tr>
     </table>
 
@@ -266,6 +269,7 @@
                       total: 0,
                       current: 0,
                       id: id,
+                      visual: '',
                     });
                   }
                   //
@@ -273,6 +277,7 @@
                     if (this.videoDetails[i].final_reviewing[j].id === id) {
                       this.videoDetails[i].final_reviewing[j].total = total;
                       this.videoDetails[i].final_reviewing[j].current = current;
+                      this.videoDetails[i].final_reviewing[j].visual = '✅'.repeat(current) + '⏳'.repeat(total - current);
                       console.log('Final reviewing', this.videoDetails[i].final_reviewing[j]);
                       break;
                     }

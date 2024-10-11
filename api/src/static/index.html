@@ -133,7 +133,7 @@
             "step_7",
             "step_7.2. importing media",
             "step_8",
-            "final reviewing",
+            // "final reviewing",
             "exporting",
           ],
           videoDetails: [],
@@ -221,9 +221,6 @@
           let {
             status,
           } = message;
-          if (status && status.startsWith('final reviewing')) {
-            status = 'final reviewing';
-          }
           console.log(message);
           if (this.videoDetails.filter((item) => item.prompt === message.prompt).length === 0) {
             this.videoDetails.push({
@@ -231,13 +228,39 @@
               ...this.$data.steps.reduce((acc, step) => {
                 acc[step] = '';
                 return acc;
-              }, {})
+              }, {}),
+              final_reviewing: [],
             });
           }
           //
           console.log(this.videoDetails, message.status);
           for (let i = 0; i < this.videoDetails.length; i++) {
             if (this.videoDetails[i].prompt === message.prompt) {
+              // final reviewing 5 out of 5 1/5
+              if (status.startsWith('final reviewing')) {
+                // let matcher = new Regex('final reviewing (\\d+) out of (\\d+) (\\d+)/(\\d+)');
+                let matcher = /final reviewing (\d+) out of (\d+) (\d+)\/(\d+)/;
+                let match = matcher.exec(message.status);
+                if (match) {
+                  let [_, id, total1, current, total] = match;
+                  let final_reviewing_item = this.videoDetails[i].final_reviewing[id];
+                  if (typeof final_reviewing_item === 'undefined') {
+                    this.videoDetails[i].final_reviewing.push({
+                      total: 0,
+                      current: 0,
+                      id: id,
+                    });
+                  }
+                  //
+                  for (let j = 0; j < this.videoDetails[i].final_reviewing.length; j++) {
+                    if (this.videoDetails[i].final_reviewing[j].id === id) {
+                      this.videoDetails[i].final_reviewing[j].total = total;
+                      this.videoDetails[i].final_reviewing[j].current = current;
+                      break;
+                    }
+                  }
+                }
+              }else{
               if ('' === this.videoDetails[i][status]) {
                 this.videoDetails[i][status] = '✅';
               }else{
@@ -247,6 +270,7 @@
                 // ✅ ✅ ✅ 60%
                 // ✅ ✅ ✅ ✅ ✅ 100%
                 // ✅ ✅ 40%
+              }
               }
               break;
             }

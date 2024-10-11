@@ -59,10 +59,22 @@
       <tr>
         <th>Prompt</th>
         <th v-for="step in steps" :key="step">{{ step }}</th>
+        <th>
+          Final Reviewing
+        </th>
+        <th>
+          Exporting
+        </th>
       </tr>
       <tr v-for="videoDetail in videoDetails" :key="videoDetail.prompt">
         <td>{{ videoDetail.prompt }}</td>
         <td v-for="step in steps" :key="step">{{ videoDetail[step] }}</td>
+      </tr>
+      <tr>
+        {{ videoDetails.final_reviewing }}
+      </tr>
+      <tr>
+        {{ videoDetails.exporting }}
       </tr>
     </table>
 
@@ -134,7 +146,7 @@
             "step_7.2. importing media",
             "step_8",
             // "final reviewing",
-            "exporting",
+            // "exporting",
           ],
           videoDetails: [],
           baseUrl,
@@ -230,6 +242,7 @@
                 return acc;
               }, {}),
               final_reviewing: [],
+              exporting: '',
             });
           }
           //
@@ -238,7 +251,6 @@
             if (this.videoDetails[i].prompt === message.prompt) {
               // final reviewing 5 out of 5 1/5
               if (status.startsWith('final reviewing')) {
-                // let matcher = new Regex('final reviewing (\\d+) out of (\\d+) (\\d+)/(\\d+)');
                 let matcher = /final reviewing (\d+) out of (\d+) (\d+)\/(\d+)/;
                 let match = matcher.exec(message.status);
                 if (match) {
@@ -261,16 +273,16 @@
                   }
                 }
               }else{
-              if ('' === this.videoDetails[i][status]) {
-                this.videoDetails[i][status] = '✅';
-              }else{
-                this.videoDetails[i][status] = this.videoDetails[i][status] + '✅';
-                // 
-                // ✅ ✅ ✅ ✅ 80%
-                // ✅ ✅ ✅ 60%
-                // ✅ ✅ ✅ ✅ ✅ 100%
-                // ✅ ✅ 40%
-              }
+                if ('' === this.videoDetails[i][status]) {
+                  this.videoDetails[i][status] = '✅';
+                }else{
+                  this.videoDetails[i][status] = this.videoDetails[i][status] + '✅';
+                  // 
+                  // ✅ ✅ ✅ ✅ 80%
+                  // ✅ ✅ ✅ 60%
+                  // ✅ ✅ ✅ ✅ ✅ 100%
+                  // ✅ ✅ 40%
+                }
               }
               break;
             }

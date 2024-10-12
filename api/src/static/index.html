@@ -344,6 +344,12 @@
               if (video_url) {
                 this.appendNotification("- Video is ready to play!", baseUrl + video_url.replace(/^\/+/, ''));
               }
+            }else{
+              if (status === 'partial_completed') {
+                if (video_url) {
+                  this.appendNotification("- Bạn có thể xem trước một phần video, toàn bộ video sẽ được cập nhật sau!", baseUrl + video_url.replace(/^\/+/, ''));
+                }
+              }
             }
           });
 

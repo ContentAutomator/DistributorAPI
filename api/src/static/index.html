@@ -95,7 +95,7 @@
           <source :src="notification.video_url" type="video/mp4">
           Your browser does not support the video tag.
         </video>
-        <a v-if="notification.video_url" :href="notification.video_url" download>
+        <a v-if="notification.video_url" :href="notification.video_url" target="_blank">
           <small>
             Click to download the video
           </small>

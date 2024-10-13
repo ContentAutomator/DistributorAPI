@@ -6,6 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Video Rendering Job</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .suggested-prompts {
+      list-style-type: none;
+      padding: 0;
+    }
+    .suggested-prompt {
+      cursor: pointer;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      display: inline-block;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+    }
+    .suggested-prompt:hover {
+      background-color: #f0f0f0;
+    } 
+  </style>
 </head>
 
 <body>
@@ -24,6 +43,18 @@
           Cung cấp prompt tùy chỉnh mô tả nội dung bạn muốn tạo.
         </small>
          <textarea id="prompt" v-model="customPrompt" placeholder="Nhập prompt tùy chỉnh" required></textarea>
+        <!-- Suggested Prompts Section -->
+        <label for="suggested_prompt">
+          Suggested Prompts:
+        </label>
+        <small>
+          Hoặc chọn một trong các gợi ý sau:
+        </small>
+        <ul class="suggested-prompts">
+          <li v-for="suggestedPrompt in suggestedPrompts" :key="suggestedPrompt" @click="customPrompt = suggestedPrompt" class="suggested-prompt">
+            {{ suggestedPrompt }}
+          </li>
+        </ul>
       </div>
       <!-- New input field for secret_key -->
       <label for="secret_key">
@@ -65,12 +96,12 @@
     </table>
 
     <!-- Notification list -->
-    <ul>
-      <li>
+    <ul class="notifications">
+      <li class="notification">
         Trong khi chờ video được tạo, bạn có thể gửi prompt khác và quá trình tạo video sẽ được thực hiện song song.
         <!-- While waiting for the video to render, you can submit another prompt and it will be rendered concurrently. -->
       </li>
-      <li v-for="notification in notifications" :key="notification.id">
+      <li v-for="notification in notifications" :key="notification.id" class="notification">
         <span>{{ notification.message }}</span>
 
         <!-- Conditionally display video player if video_url exists in the notification -->
@@ -111,6 +142,12 @@
     const app = Vue.createApp({
       data() {
         return {
+          suggestedPrompts: [
+            'Xây dựng bài giảng về sales pipeline',
+            'Giới thiệu về công nghệ Blockchain',
+            'Những bước cần thiết để trở thành một indie hacker',
+            'Hãy nói về một kiến thức thú vị',
+          ],
           notifications: [], // Store notifications reactively
           count: 0,
           socketIsConnected: false,

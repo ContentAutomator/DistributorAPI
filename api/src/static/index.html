@@ -51,7 +51,7 @@
           Hoặc chọn một trong các gợi ý sau:
         </small>
         <ul class="suggested-prompts">
-          <li v-for="suggestedPrompt in suggestedPrompts" :key="suggestedPrompt" @click="customPrompt = suggestedPrompt" class="suggested-prompt">
+          <li v-for="suggestedPrompt in suggestedPrompts" :key="suggestedPrompt" @click="submitCustomPrompt(suggestedPrompt)" class="suggested-prompt">
             {{ suggestedPrompt }}
           </li>
         </ul>
@@ -189,6 +189,10 @@
         };
       },
       methods: {
+        submitCustomPrompt(suggestedPrompt) {
+          this.customPrompt = suggestedPrompt;
+          this.submitForm();
+        },
         appendNotification(message, video_url = null) {
           // const start = dayjs('2023-10-01');
           // const end = dayjs('2023-10-05');

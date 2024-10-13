@@ -4,33 +4,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebSocket Client with Vue.js</title>
+  <title>Video Rendering Job</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <div id="app">
-    <h1>WebSocket Client</h1>
+    <h1>
+      Video Rendering Service
+    </h1>
 
     <!-- Form to select visual prompt and provide a custom prompt -->
     <form @submit.prevent="submitForm">
-      <!-- <div v-show="secret_key && secret_key !== 'please-contact-admin-to-get-one'">
-        <label for="visual_prompt">
-          Chọn Prompt cho hình ảnh:
-        </label>
-        <small>
-          Chọn một danh mục hình ảnh để tạo nội dung.
-          Lưu ý nếu bạn chọn sai danh mục, quá trình tạo video sẽ mất thời gian.
-        </small>
-        <input type="text" id="prompt" v-model="selectedVisualPrompt" placeholder="Nhập prompt tùy chỉnh" required>
-        <style>
-        </style>
-        <span v-for="visualPrompt in visualPrompts" :key="visualPrompt" @click="selectedVisualPrompt = visualPrompt"
-          :class="{ 'selected': selectedVisualPrompt === visualPrompt }" class="visual-prompt">
-          {{ visualPrompt }}
-        </span>
-      </div> -->
-
       <div v-show="secret_key && secret_key !== 'please-contact-admin-to-get-one'">
         <label for="prompt">
           Nhập prompt:
@@ -38,7 +23,6 @@
         <small>
           Cung cấp prompt tùy chỉnh mô tả nội dung bạn muốn tạo.
         </small>
-        <!-- <input type="text" id="prompt" v-model="customPrompt" placeholder="Nhập prompt tùy chỉnh" required> -->
          <textarea id="prompt" v-model="customPrompt" placeholder="Nhập prompt tùy chỉnh" required></textarea>
       </div>
       <!-- New input field for secret_key -->
@@ -248,12 +232,9 @@
             });
           }
           //
-          // console.log(this.videoDetails, message.status);
           for (let i = 0; i < this.videoDetails.length; i++) {
             if (this.videoDetails[i].prompt === message.prompt) {
-              // console.log("Found", this.videoDetails[i]);
               if (status.startsWith('final reviewing')) {
-                // console.log("Final reviewing", message.status);
                 let matcher = /final reviewing (\d+) out of (\d+) (\d+)\/(\d+)/;
                 let match = matcher.exec(message.status);
                 console.log(match, status);
@@ -297,11 +278,6 @@
                   this.videoDetails[i][status] = '✅';
                 }else{
                   this.videoDetails[i][status] = this.videoDetails[i][status] + '✅';
-                  // 
-                  // ✅ ✅ ✅ ✅ 80%
-                  // ✅ ✅ ✅ 60%
-                  // ✅ ✅ ✅ ✅ ✅ 100%
-                  // ✅ ✅ 40%
                 }
                 }
               }

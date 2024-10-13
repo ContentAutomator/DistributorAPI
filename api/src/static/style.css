@@ -17,7 +17,7 @@ form {
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
+  max-width: 1200px;
   margin: 0 auto 1.5rem;
 }
 
@@ -77,14 +77,14 @@ button:hover {
   background-color: #45a049;
 }
 
-ul {
+ul.notifications {
   list-style-type: none;
   padding: 0;
   max-width: 500px;
   margin: 0 auto;
 }
 
-li {
+li.notification {
   background-color: #e0e0e0;
   padding: 0.75rem;
   margin: 0.5rem 0;

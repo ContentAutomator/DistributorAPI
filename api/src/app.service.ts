@@ -43,6 +43,7 @@ export class AppService implements OnModuleInit {
   readCache(job: VideoDetailsDto) {
     let videoDetailsFilePath = this.getCacheFilePath(job.prompt);
     if (existsSync(videoDetailsFilePath)) {
+      console.log('Reading cache:', videoDetailsFilePath);
       let videoDetails = JSON.parse(readFileSync(videoDetailsFilePath, 'utf8'));
       return videoDetails;
     }
@@ -51,8 +52,11 @@ export class AppService implements OnModuleInit {
   checkCache(job: VideoDetailsDto): boolean {
     let videoDetails = this.readCache(job);
     console.log('Checking cache:', videoDetails);
-    if (videoDetails && videoDetails.completed === true) {
-      return true;
+    if (videoDetails) {
+      if (videoDetails.completed === true) {
+        console.log('Job already completed');
+        return true;
+      }
     }
     return false;
   }

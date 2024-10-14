@@ -50,6 +50,7 @@ export class AppService implements OnModuleInit {
   }
   checkCache(job: VideoDetailsDto): boolean {
     let videoDetails = this.readCache(job);
+    console.log('Checking cache:', videoDetails);
     if (videoDetails && videoDetails.completed === true) {
       return true;
     }
@@ -101,7 +102,10 @@ export class AppService implements OnModuleInit {
           );
         }, notification.time);
       }
-      return;
+      return {
+        message: 'Video rendering job already completed',
+        job_id: '12345',
+      }
     }
     let videoDetailsFilePath = this.getCacheFilePath(videoDetails.prompt);
     writeFileSync(videoDetailsFilePath, JSON.stringify({

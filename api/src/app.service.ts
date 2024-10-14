@@ -99,13 +99,14 @@ export class AppService implements OnModuleInit {
       let cached = this.readCache(videoDetails);
       let notifications = cached.notifications;
       for (let notification of notifications) {
+        let time = notification.time;
         setTimeout(() => {
           this.appGateway.sendNotification(
             notification.message,
             secret_key,
             'job_complete'
           );
-        }, notification.time);
+        }, Math.round(time / 3));
       }
       return {
         message: 'Video rendering job already completed',

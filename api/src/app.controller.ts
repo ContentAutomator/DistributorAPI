@@ -37,7 +37,7 @@ export class AppController {
   @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   @Header('Access-Control-Allow-Methods', 'POST')
   notifyWhenJobComplete(@Body() videoDetails: VideoDetailsDto) {
-    console.log('Received message:', videoDetails);
+    // console.log('Received message:', videoDetails);
     let secret_key = videoDetails.secret_key;
     this.appService.handleMessage(videoDetails, secret_key);
 

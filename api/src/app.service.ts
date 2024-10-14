@@ -81,7 +81,7 @@ export class AppService implements OnModuleInit {
       notifications: notifications,
     }, null, 2));
     // 
-    console.log('Received message from Kafka:', job);
+    // console.log('Received message from Kafka:', job);
 
     // Gửi thông báo tới tất cả client qua WebSocket
     this.appGateway.notifyWhenJobComplete(job, secret_key);

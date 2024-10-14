@@ -65,7 +65,9 @@ export class AppController {
   @Header('Access-Control-Allow-Methods', 'POST')
   async renderVideo(@Body() videoDetails: VideoDetailsDto) {
     console.log('Received video details:', videoDetails);
-    await this.videoPromptQueueService.add(videoDetails);
+    if (!this.appService.checkCache(videoDetails)) {
+      await this.videoPromptQueueService.add(videoDetails);
+    }
     return this.appService.renderVideo(videoDetails);
   }
 }

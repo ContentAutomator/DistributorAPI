@@ -103,6 +103,7 @@ export class AppService implements OnModuleInit {
           this.appGateway.sendNotification(
             notification.message,
             secret_key,
+            'job_complete'
           );
         }, notification.time);
       }

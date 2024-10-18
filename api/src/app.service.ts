@@ -68,7 +68,12 @@ export class AppService implements OnModuleInit {
   ) {
     // 
     let videoDetailsFilePath = this.getCacheFilePath(job.prompt);
-    let parsed = JSON.parse(readFileSync(videoDetailsFilePath, 'utf8'));
+    let parsed: any;
+    if (existsSync(videoDetailsFilePath)) {
+      parsed = JSON.parse(readFileSync(videoDetailsFilePath, 'utf8'));
+    }else{
+      parsed = { notifications: [], started: Date.now() };
+    }
     let notifications = parsed.notifications;
     let started = parsed.started;
     notifications.push({

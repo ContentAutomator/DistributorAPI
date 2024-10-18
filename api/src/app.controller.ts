@@ -10,7 +10,8 @@ import {
 import { AppService } from './app.service';
 import { VideoPromptQueueService } from './video-prompt-queue/video-prompt-queue.service';
 
-import { 
+import {
+  AutoPromptDto,
   VideoDetailsDto,
 } from './dto';
 
@@ -47,6 +48,25 @@ export class AppController {
   @Get('/health')
   getHealth(): string {
     return 'OK';
+  }
+  // api/v1/auto-prompt
+  @Options('/api/v1/auto-prompt')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  @Header('Access-Control-Allow-Methods', 'POST')
+  @Header('Access-Control-Max-Age', '3600')
+  @Header('Content-Type', 'application/json')
+  optionsAutoPrompt() {
+    return 'OK';
+  }
+  @Post('/api/v1/auto-prompt')
+  @Header('Content-Type', 'application/json')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  @Header('Access-Control-Allow-Methods', 'POST')
+  async autoPrompt(@Body() autoPrompt: AutoPromptDto) {
+    console.log('Received auto-prompt:', autoPrompt);
+    return this.videoPromptQueueService.addAutoPrompt(autoPrompt);
   }
 
   @Options('/api/v1/render-video')
